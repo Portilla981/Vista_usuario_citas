@@ -1,0 +1,27 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static '/css/main_u.css' %}">
+    <title>{{titulo}}</title>
+</head>
+
+<body>
+    {% if user.is_authenticated %}
+        {% include 'bloques/navbar_sesion.html' %}
+    {% else %}
+        {% include 'bloques/nav_var.html' %}
+    {% endif %}
+    
+    {% block contenido1 %}
+    {% endblock %}   
+
+    {% include 'bloques/footer.html' %}
+</body>
+
+
+</html>

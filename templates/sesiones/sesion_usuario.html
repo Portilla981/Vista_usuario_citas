@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+  
+    <div class="bloque__formulario">
+        <h2 class="bloque__subtitulo">Crear usuario</h2>
+        <form class="formato__creacion" method="POST" autocomplete="off">
+            {% csrf_token %} 
+            {{ form.as_p }}            
+            <input type="hidden" name="next" , value="{{ next }}" />
+            <div class="formato__button">
+                <button class="button_accion" type="submit">Guardar Datos</button>
+            </div>
+            <div>
+                <p>{{ mensaje }}</p>
+            </div>
+        </form>
+    </div>    
+
+{% endblock %}

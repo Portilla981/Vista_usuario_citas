@@ -1,0 +1,30 @@
+.bloque__footer{
+    position:fixed;
+    bottom: 0;
+    width: 98.5%;
+}
+
+
+.footer {
+    /* display: grid;
+    grid-template-columns: repeat(1fr, 1); */
+    /* position: fixed; Posición fija */
+    /* bottom: 0; Altura Total */
+    /* width: 100%; */
+    display: flex;
+    justify-content: space-evenly;
+    background-color: var(--primary-950);
+    /* margin: 0 10px; Este pegado a la margen y utilice automáticamente el ancho */
+    /* padding: 5px; */
+    
+}
+
+.footer__redes {
+    text-decoration: none;
+    align-content: center;
+    
+}
+
+/* .footer-container {
+    justify-content: center; 
+}*/

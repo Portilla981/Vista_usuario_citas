@@ -1,0 +1,50 @@
+<header class="header">
+    <h1 class="navbar__title">
+        POLICLI
+        <span class="navbar__subtitle">Citas medicas</span>
+
+    </h1>
+    <h2 class="titulo__sesion">¡Bienvenido {{ user }} a su sesión!</h2>
+    <div class="navar-container">
+        <nav class="navbar">
+            <ul class="navbar__list">
+                <li class="navbar__item">
+                    <a href="{% url 'Principal' %}" class="navbar__link">Perfil de usuario</a>                    
+                    {% if user.is_superuser == True %}
+                    <ul>
+                        <a href="{% url 'Lista_cuentas' %}" class="navbar__link">Listar cuenta</a>
+                    </ul>
+                    {% endif %}                    
+                    <ul>
+                        <a href="{% url 'Perfiles' %}" class="navbar__link">Mis Datos</a>
+                    </ul>
+                    
+                </li>
+                <li class="navbar__item">
+                    <a href="#" class="navbar__link">Horarios</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="#" class="navbar__link">Citas</a>
+                </li>
+                <li  class="navbar__item"><a href="#" class="navbar__link">Registros</a>
+                    
+                    {% if user.is_superuser == True %}
+                    <ul>
+                        <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
+                    </ul>                    
+                    {% endif %}                    
+                
+                </li>
+                <li class="navbar__item">
+                    <a href="#" class="navbar__link">Historia clínica</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="#" class="navbar__link">Facturación</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="{% url 'Sesion_Cerrada' %}" class="navbar__link">Salir de sesión</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>

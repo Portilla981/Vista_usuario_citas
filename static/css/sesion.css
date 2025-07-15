@@ -1,0 +1,60 @@
+.titulo__sesion {
+    font-size: var(--fs-xxxs);
+    /* text-align: center; */
+    margin: 0;
+    background-color: var(--white);
+}
+
+.bloque__formulario{
+    width: 50%;
+    align-self: center;
+    border: solid 3px;
+    border-color: var(--gray-800);
+    border-radius: 5px;
+    margin: 40px 0 80px;
+    padding: 24px;
+}
+
+.bloque__subtitulo{
+    /* display: flex; */
+    text-align: center;
+    font-size: var(--fs-md);
+}
+
+.formato__creacion{
+    padding-left: 40px;
+    font-size: var(--fs-xxs);
+    font-weight: bold;
+}
+
+.formato__button{
+    display: flex;
+    justify-content: center;
+}
+
+.btn_opcion{
+    display: flex;
+    justify-content: space-evenly;
+    margin: 1rem;
+}
+
+.btn_opcion:hover{
+    box-shadow: 2px 3px 2px gray;
+}
+
+.button_accion{
+    background-color: var(--primary-950);
+    font-size: var(--fs-xxxs);
+}
+
+.perfil_usuario input{
+    display: flex;
+    flex-direction: column;
+    /* background-color: rgb(223, 150, 62); */
+    border: none;
+    font-size: var(--fs-xxs);
+    /* width: 50%; */
+    /* text-align: center; */
+    padding: 2px 80px;
+    margin: 5px 0;
+}

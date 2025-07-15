@@ -1,0 +1,53 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<div class="bloque__formulario">
+    <h2 class="bloque__subtitulo">{{titulo}}</h2>
+
+    {% if admin.is_superuser %}
+
+    <form class="formato__creacion  " method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="hidden" name="next" , value="{{ next }}" />
+        <div class="btn_opcion">
+            <a class="btn-secundary" href="{% url 'Principal' %}">Cancelar</a>
+            {#<a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>#}
+            <button class="envio" type="submit">Guardar Cambios</button>
+        </div>
+
+    </form>
+    {% else %}
+    <form class="formato__creacion " method="POST">
+        {% csrf_token %}
+        {{ form.tipo_id.label_tag }}
+        {{ form2.tipo_id }}
+        {{ form.numero_id.label_tag }}
+        {{ form2.numero_id }}
+        {{ form.first_name.label_tag }}
+        {{ form2.first_name }}
+        {{ form.last_name.label_tag }}
+        {{ form2.last_name }}
+        {{ form.telefono.label_tag }}
+        {{ form.telefono }}
+        {{ form.email.label_tag }}
+        {{ form.email }}
+        {{ form.tipo_usuario.label_tag }}
+        {{ form2.tipo_usuario }}
+        <input type="hidden" name="next" , value="{{ next }}" />
+        <div class="btn_opcion">
+            <a class="btn-secundary" href="{% url 'Principal' %}">Cancelar</a>
+            {#<a href="{% url 'Perfil_Editar' cuenta.id %}" class="btn-primary">Editar Datos</a>#}
+            <button class="envio" type="submit">Guardar Cambios</button>
+        </div>
+
+
+
+    {% endif %}
+        <div>
+            <p>{{ mensaje }}</p>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+.table-admin{
+    /* display: block; */
+    /* width: 90%; */
+    margin: 45px;
+    text-align: center;
+    border: 2px solid;
+    background-color: aquamarine;
+    /* justify-content: space-between; */
+}
+
+th, td{
+    /* text-align: center;
+    width: max-content; */
+    border: 1px solid rgb(231, 52, 7);
+}
+
+
+[class^="btn-"]{    
+    border: none;    
+    padding: 5px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: var(--fs-xxxs);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.btn-primary{
+    background-color: rgb(233, 56, 56);
+    color: white;
+}
+
+.btn-secundary{
+    background-color: rgb(19, 22, 206);
+    color: white;
+}
+
+.btn-tercero{
+    background-color: var(--primary-950);
+    color: white;
+}

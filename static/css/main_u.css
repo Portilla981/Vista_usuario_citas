@@ -1,0 +1,18 @@
+/* El archivo main.css solo debe importar los demás para evitar múltiples solicitudes HTTP en producción: */
+
+/* Ruta adecuada para el archivo que contiene las variables */
+@import url('variables.css');
+
+@import url('body.css');
+@import url('inicio.css');
+@import url('footer.css');
+@import url('sesion.css');
+@import url('tablas.css');
+
+
+/*@import url('layout.css');
+@import url('components/navbar.css');
+@import url('components/footer.css');
+@import url('components/forms.css');
+@import url('pages/home.css');
+@import url('themes/dark-mode.css'); */

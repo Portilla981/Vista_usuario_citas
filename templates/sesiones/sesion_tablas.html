@@ -1,0 +1,26 @@
+
+{% extends 'listado_tabla.html' %}
+
+<!-- {% block contenido1 %} -->
+
+<!-- <h2>Tablas dinámicas</h2> -->
+{% block prueba %}
+    <h3>q carajos paginas</h3>
+
+{% endblock prueba %}
+
+<h3>como</h3>
+
+
+<table class="table">
+    <thead>
+        {% block columnas %}
+        {% endblock %}
+    </thead>
+    <tbody>
+        {% block filas %}
+        {% endblock %}
+    </tbody>
+</table>
+
+<!-- {% endblock %} -->

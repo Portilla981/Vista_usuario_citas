@@ -1,0 +1,6 @@
+<form action="GET">
+    <h2>Buscando...</h2>
+    {% csrf_token %}
+    {{ formB.as_p }}
+    <button type="submit">Buscar</button>
+</form>

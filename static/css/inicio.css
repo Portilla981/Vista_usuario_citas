@@ -1,0 +1,109 @@
+.header {
+    position: sticky; /* Posición fija */
+    top: 0; /* Altura Total*/
+    width: 100%;
+    
+}
+
+.navbar {
+    /* display: flex; */
+    /*flex-direction: column; /* Dirección de los elementos */
+    /* margin: 0 auto; Este pegado a la margen y utilice automáticamente el ancho */
+    padding: 5px;
+    /* width: 100%; */
+    background-color: var(--primary-950);
+}
+
+.navbar__title {
+    margin: 0;
+    padding: 12px;
+    font-size: var(--fs-xl);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--white);
+    /* background-color: var(--primary-800); */
+}
+
+.navbar__subtitle {
+    font-size: var(--fs-xs);
+    color: var(--gray-700);    
+}
+
+
+.navbar__list{
+    list-style: none; /* Elimina los puentos de la lista de elementos*/
+    padding: 4px;
+    margin: 0;
+    display: flex; /* Elementos en linea a lo horizontal*/
+    gap: 40px; /* Separacion de elementos */
+    flex-grow: 1;
+    justify-content: space-evenly; /* Separacion uniforme a lo ancho del elemento segun el total de los elementos*/
+}
+
+
+.navbar__link {
+    text-decoration: none; /* Elimina el decorador de las refencias*/
+    color: var(--white);
+    transition: color 0.3s ease; /* Efecto*/
+}
+
+.navbar__link:hover {
+    color: red;
+}
+
+.bloque__inicio{
+    width: 400px;
+    align-self: center;
+    border: solid 3px;
+    border-color: var(--gray-800);
+    border-radius: 5px;
+    margin-top: 24px;
+    padding-bottom: 24px;
+    justify-items: center;
+
+}
+
+.form__inicio{
+    /* padding: 15px; */
+    justify-items: center;
+
+}
+
+.form__olvido{
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    text-decoration: none;
+    color: blueviolet;
+}   
+
+.bloque__titulo{
+    /* padding: 20px 0 0 40px; */
+    text-align: center;
+}
+
+.form__button{
+    width: 100%;
+    background-color: var(--primary-950);
+    justify-content: center;
+    font-size: var(--fs-xxs);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    color: white;
+}
+
+.form__button:hover{
+    background-color: var(--primary-800);
+    box-shadow: 2px 3px 2px gray;
+}
+
+#id_usuario, #id_pasword{
+    font-size: var(--fs-xxxs);
+    background-color: beige;
+}
+
+label{
+    font-style: italic;
+    
+}

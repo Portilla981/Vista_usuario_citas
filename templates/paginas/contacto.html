@@ -1,0 +1,15 @@
+{% extends 'index.html' %}
+
+
+{% block contenido1 %}
+<form  method="POST">
+    <h2>Formulario de contacto</h2>
+    {{error}}
+    {% csrf_token %}
+    {{ form.as_p }}  
+
+    <button type="submit">Enviar</button>
+
+    {{ mensaje }}
+</form>
+{% endblock %}
