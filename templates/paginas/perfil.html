@@ -6,7 +6,7 @@
 
     {% if admin.is_superuser %}
 
-    <form class="formato__creacion  " method="POST">
+    <form class="formato__creacion" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="hidden" name="next" , value="{{ next }}" />

@@ -16,5 +16,6 @@ urlpatterns = [
     path('sesion/perfil/', visualizar_cuenta, name='Perfiles'),
     path('sesion/cuenta/<int:pk>/', ver_cuentas, name='Perfil_Usuario'), # type: ignore
     path('sesion/cuenta/Editar/<int:pk>/', editar_cuenta, name='Perfil_Editar'), # type: ignore
+    path('sesion/cuenta/horarios', horarioCitas, name='Registro_horario'), # type: ignore
 
 ]

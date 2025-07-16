@@ -31,9 +31,12 @@
                     {% if user.is_superuser == True %}
                     <ul>
                         <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
-                    </ul>                    
+                    </ul>
+                    
                     {% endif %}                    
-                
+                    <ul>
+                        <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
+                    </ul>                    
                 </li>
                 <li class="navbar__item">
                     <a href="#" class="navbar__link">Historia clínica</a>

@@ -1,5 +1,9 @@
+# from typing import Any, Iterable, Sequence
 from django import forms
+# from django.forms.widgets import _OptAttrs
 from .models import *
+# from django.forms.widgets import TimeInput, SelectDateWidget, _OptAttrs
+from datetime import datetime
 
 class Formato_Contacto(forms.ModelForm):
     
@@ -17,7 +21,7 @@ class Formato_RegistroU(forms.ModelForm):
     # Clase para mostrar los campos necesarios en el formulario
     class Meta:
         model = CreacionUser
-        # Se añaden tanto los campos del User como los creados en el formato abstrato
+        # Se añaden tanto los campos del User como los creados en el formato adstrato
         fields = ['tipo_id','numero_id','first_name','last_name', 'telefono','email', 'tipo_usuario','is_active','username', 'password1', 'password2']
         
         help_texts ={
@@ -30,7 +34,6 @@ class Formato_RegistroU(forms.ModelForm):
             'tipo_usuario':'',
             'is_active':'',
             'username':'',
-            #'password':forms.TextInput(attrs={'readonly': True}),
             'date_joined': '',
             'last_login':'',
             
@@ -64,10 +67,10 @@ class PerfilUsuario(forms.ModelForm):
     
     class Meta:        
         model = CreacionUser
-        # Se añaden tanto los campos del User como los creados en el formato abstrato
-        fields = ['tipo_id','numero_id','first_name','last_name', 'telefono','email', 'tipo_usuario','username', 'is_active', 'date_joined','last_login']
+        # Se añaden tanto los campos del User como los creados en el formato adstrato
+        fields = ['tipo_id','numero_id','first_name','last_name', 'telefono','email', 'tipo_usuario','username', 'date_joined','last_login']
         
-        # froma de qquitar la ayuda de texto en los input
+        # forma de quitar la ayuda de texto en los input
         help_texts ={
             'tipo_id': '',
             'numero_id': '',
@@ -77,12 +80,9 @@ class PerfilUsuario(forms.ModelForm):
             'email':'',
             'tipo_usuario':'',
             'is_active':'',
-            'username':'',
-            #'password':forms.TextInput(attrs={'readonly': True}),
+            'username':'',            
             'date_joined': '',
-            'last_login':'',
-            #'fecha_actualizacion':'',
-            
+            'last_login':'',           
         }
         
         widgets={
@@ -94,11 +94,9 @@ class PerfilUsuario(forms.ModelForm):
             'email':forms.EmailInput(attrs={'readonly': True}),
             'tipo_usuario':forms.TextInput(attrs={'readonly': True}),
             'is_active':forms.CheckboxInput(attrs={'readonly': True}),
-            'username':forms.TextInput(attrs={'readonly': True}),
-            #'password':forms.TextInput(attrs={'readonly': True}),
+            'username':forms.TextInput(attrs={'readonly': True}),            
             'date_joined': forms.TextInput(attrs={'readonly': True}),
-            'last_login':forms.TextInput(attrs={'readonly': True}),
-            #'fecha_actualizacion':forms.TextInput(attrs={'readonly': True}),
+            'last_login':forms.TextInput(attrs={'readonly': True}),            
         }
 
     
@@ -120,12 +118,53 @@ class EditarUsuario(forms.ModelForm):
             'tipo_usuario':'',
             'is_active':'',
             'username':'',
-            #'password':forms.TextInput(attrs={'readonly': True}),
             'date_joined': '',
             'last_login':'',
-            #'fecha_actualizacion':'',            
         }
 
 class BarraBusqueda(forms.Form):
     buscar = forms.CharField(label='Buscar:', max_length=100)
+    
+
+# funcione spara esytablecer el dia y la hora actual para el formato 
+'''
+class CustomYearSelect(SelectDateWidget):
+    def __init__(self, years= None, *args, **kwargs):
+        if years is None:
+            current_year = datetime.now().year
+            years = range(current_year, current_year+11)        
+        super().__init__(years=years, *args, **kwargs)
+        
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        year_field = context['widget']['subwidgets'] [0]
+        context['widget']['subwidgets'][0] = {**year_field, 'choises': [(year, year) for year in self.years]}
+        
+        return context
+            
+class CustomTimeInput(TimeInput):
+    def __init__(self, attrs= None, format=None):
+        attrs= attrs or {}
+        attrs.update({'min': '07:00', 'max': '19:00'})
+        super().__init__(attrs, format)
+        '''
+
+    
+class CreacionHorarioCitas(forms.ModelForm):
+    
+    class Meta:
+        model = CrearHorario
+        fields = '__all__'           
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type':'date'}),
+            'hora_inicio': forms.TimeInput(attrs={'type':'time'}),
+            'hora_final': forms.TimeInput(attrs={'type':'time'}),
+        }
+        
+        # def __init__(self, *args, **kwargs):
+        #     print('Buscando medicos')
+        #     super(CreacionHorarioCitas, self).__init__(*args, **kwargs) # type: ignore
+        #     self.fields['id_usuario_id'].queryset = CreacionUser.objects.filter(tipo_usuario = 'Medico') # type: ignore
+        #     # self.fields['id_medico'].label_from_instance = lambda obj: "%s %s" % (obj.first_name, obj.last_name)      #f'{obj.first_name} {obj.last_name}' # type: ignore
+            
     

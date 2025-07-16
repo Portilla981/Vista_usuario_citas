@@ -21,8 +21,6 @@
     </form>
     {% else %}
 
-
-
     <form class="formato__creacion perfil_usuario ">
         {% csrf_token %}
         {{ form.as_p }}
@@ -31,6 +29,9 @@
         <div class="btn_opcion">
             <a class="btn-secundary" href="{% url 'Principal' %}">Volver</a>
             <a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>
+            <button>
+                <a href="">Habilitar/Deshabilitar</a>
+            </button>
             <button class="envio" type="submit">Guardar Cambios</button>
 
         </div>

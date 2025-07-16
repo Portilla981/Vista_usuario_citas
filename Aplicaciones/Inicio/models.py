@@ -4,6 +4,7 @@ from datetime import datetime
 # creación de la tabla de usuario d django extendida
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from .utilitarios import *
 
 
 # Creación de usuarios
@@ -29,6 +30,9 @@ class CreacionUser(AbstractUser):
     tipo_usuario = models.CharField(max_length=20, choices = Tipo_User.choices, default = Tipo_User.PACIENTE, verbose_name='Tipo Usuario')    
     fecha_actualizacion = models.DateTimeField (auto_now=True, verbose_name='Ultima Actualización')
     
+    
+    def __str__(self):
+        return f'{self.first_name} - {self.last_name}' 
 
 
 # Creación de formulario para contactarse
@@ -57,6 +61,33 @@ class ContactarUsuario(models.Model):
     
     def __str__(self):
         return f'{self.nombres} - {self.apellidos}' 
+    
+    
+class HabitarDeshabilitar(models.Model):    
+    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE)
+    motivo = models.CharField(max_length= 255, null=False, blank=False)    
+    fecha_hora = models.DateTimeField()
+    
+
+class CrearHorario(models.Model):
+    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Medico')
+    fecha = models.DateField(null=False, blank=False, verbose_name='Fecha de horario')
+    hora_inicio = models.TimeField(null=False, blank=False, default= '08:00', verbose_name='Hora de inicio')# type: ignore
+    hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
+    duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duracion de Cita')
+    
+    # def save(self, *args, **kwargs):
+    #     super().save(*args, **kwargs)
+    #     division_horario(self) # type: ignore
+        
+            
+class HorarioCita(models.Model):
+    horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
+    fecha = models.DateField(verbose_name='Fecha')
+    hora_cita = models.TimeField(verbose_name='Hora de inicio')# type: ignore    
+    disponible = models.BooleanField(default=True)
+    
+
 
 
 # Cracion de otro modelo de usuarios 

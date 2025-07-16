@@ -1,0 +1,13 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<div>
+    <form method="POST" >
+        <h2>Creacion de horario</h2>
+        {% csrf_token %}
+        {{ horario.as_p }}
+        <button type="submit">Crear Horario</button>
+    </form>
+</div>
+
+{% endblock %}

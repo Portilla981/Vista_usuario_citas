@@ -66,7 +66,7 @@
 
 .form__inicio{
     /* padding: 15px; */
-    justify-items: center;
+    justify-items:end;
 
 }
 
@@ -84,13 +84,14 @@
 }
 
 .form__button{
-    width: 100%;
+    width: 60%;
     background-color: var(--primary-950);
     justify-content: center;
     font-size: var(--fs-xxs);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
     color: white;
+
 }
 
 .form__button:hover{
@@ -98,7 +99,7 @@
     box-shadow: 2px 3px 2px gray;
 }
 
-#id_usuario, #id_pasword{
+#id_usuario, #id_password{
     font-size: var(--fs-xxxs);
     background-color: beige;
 }

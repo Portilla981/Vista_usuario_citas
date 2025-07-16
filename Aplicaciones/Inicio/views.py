@@ -204,7 +204,7 @@ def ver_cuentas(request, pk):
     }
     return render(request, 'paginas/mi_perfil.html', data)
     
-
+@login_required # type: ignore
 def editar_cuenta(request, pk):
     print("estamos jodidos")
     if request.method == 'GET':
@@ -225,10 +225,8 @@ def editar_cuenta(request, pk):
     else:
         try:
             perfil = get_object_or_404(CreacionUser, pk=pk)
-            #tarea = get_object_or_404(Task, pk=tarea_id, user=request.user)
-            #print(tarea_id)
             form = EditarUsuario(request.POST, instance=perfil)
-            #form = FormularioTarea(request.POST, instance=tarea)
+            
             if form.is_valid():
                 print('Se verifica su validación')
                 form.save() 
@@ -252,6 +250,25 @@ def  buscador(request):
             resultado =CreacionUser.objects.filter(nombre_incontains=buscar)
     return render(request, 'buscador_html',{'formB': formato, 'resultsdo': resultado})
     
+    
+@login_required
+def horarioCitas(request):
+    if request.method == 'POST':
+        print('envio horario')
+        form = CreacionHorarioCitas(request.POST) # type: ignore        
+        if form.is_valid():
+            print('guardanro')
+            
+            form.save()
+            return redirect('Principal')        
+    else:
+        print('generando')
+        form = CreacionHorarioCitas()  
+        form.fields['id_usuario'].queryset = CreacionUser.objects.filter(tipo_usuario = 'Medico')       # type: ignore
+        
+    return render(request, 'paginas/horarios.html', {'horario':form}) # type: ignore
+
+
 
 
 
