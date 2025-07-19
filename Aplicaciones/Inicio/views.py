@@ -1,4 +1,5 @@
-from typing import Any
+from django.contrib import messages
+# from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render, redirect
 from .forms import *
@@ -122,9 +123,11 @@ def registro_usuario(request):
             print('Se verifica su validación')
             form.save()  # Guarda la contraseña y demás campos
             print('Usuario guardado ')
+            messages.success(request, 'El usuario ha sido creado')
             return redirect('Principal')
         else:
             print('Ocurrió algún error')
+            messages.error(request, 'Verifica los datos del formulario')
             return redirect('Registro_usuario')
     else:
         print('Se ingresa para crear usuario')
@@ -254,11 +257,10 @@ def  buscador(request):
 @login_required
 def horarioCitas(request):
     if request.method == 'POST':
-        print('envio horario')
+        print('Envio horario')
         form = CreacionHorarioCitas(request.POST) # type: ignore        
         if form.is_valid():
-            print('guardanro')
-            
+            print('guardando')            
             form.save()
             return redirect('Principal')        
     else:

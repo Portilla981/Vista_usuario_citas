@@ -7,7 +7,7 @@ def crear_intervalo_citas(sender, instance, created, **kwargs):
     if created:
         hora_inicial = instance.hora_inicio
         hora_final = instance.hora_final
-        intervalo = timedelta(minutes= instance.duracion)
+        intervalo = timedelta(minutes= instance.duracion) # type: ignore
         print(intervalo)
         while hora_inicial < hora_final:
             
@@ -18,3 +18,6 @@ def crear_intervalo_citas(sender, instance, created, **kwargs):
                 disponible = True               
             )
             hora_inicial = (datetime.combine(instance.fecha, hora_inicial)+ intervalo).time()
+
+        print(f'Se creo el horario de {instance.id_usuario}')
+        

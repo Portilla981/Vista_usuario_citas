@@ -21,7 +21,7 @@ def division_horario(horario_medico):
         )
         intervalos.append(division)
         hora_inicial = hora_finalizacion
-    HorarioCita.objects.bulk_create(intervalos)
+    HorarioCita.objects.bulk_create(intervalos) # type: ignore
         
         
         

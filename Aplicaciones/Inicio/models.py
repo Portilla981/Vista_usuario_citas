@@ -32,7 +32,7 @@ class CreacionUser(AbstractUser):
     
     
     def __str__(self):
-        return f'{self.first_name} - {self.last_name}' 
+        return f'{self.first_name} {self.last_name}' 
 
 
 # Creación de formulario para contactarse
@@ -75,11 +75,8 @@ class CrearHorario(models.Model):
     hora_inicio = models.TimeField(null=False, blank=False, default= '08:00', verbose_name='Hora de inicio')# type: ignore
     hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
     duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duracion de Cita')
+    fecha_registro = models.DateTimeField(auto_now_add=True)
     
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     division_horario(self) # type: ignore
-        
             
 class HorarioCita(models.Model):
     horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
