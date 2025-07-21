@@ -29,11 +29,12 @@ class CreacionUser(AbstractUser):
     telefono = models.PositiveBigIntegerField(null= False, blank= False, verbose_name='Teléfono', default=0)
     tipo_usuario = models.CharField(max_length=20, choices = Tipo_User.choices, default = Tipo_User.PACIENTE, verbose_name='Tipo Usuario')    
     fecha_actualizacion = models.DateTimeField (auto_now=True, verbose_name='Ultima Actualización')
+    nombre_completo= models.CharField(max_length = 100, null=False, blank= False, verbose_name='Nombre completo') 
     
+    def save(self, *args, **kwargs):
+        self.nombre_completo = f'{self.first_name} {self.last_name}'
+        super().save(*args, **kwargs)    
     
-    def __str__(self):
-        return f'{self.first_name} {self.last_name}' 
-
 
 # Creación de formulario para contactarse
 class ContactarUsuario(models.Model):

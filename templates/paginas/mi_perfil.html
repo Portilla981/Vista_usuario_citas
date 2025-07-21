@@ -3,79 +3,69 @@
 {% block contenido1 %}
 <div class="bloque__formulario">
     <h2 class="bloque__subtitulo">{{titulo}}</h2>
-
     {% if admin.is_superuser %}
-
-    {% if perfil.id == admin.id %}
-
-    <form class="formato__creacion perfil_usuario ">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="hidden" name="next" , value="{{ next }}" />
-        <div class="btn_opcion">
-            <a href="{% url 'Principal' %}">volver</a>
-        </div>
-        <div>
-            <p>{{ mensaje }}</p>
-        </div>
-    </form>
-    {% else %}
-
-    <form class="formato__creacion perfil_usuario ">
-        {% csrf_token %}
-        {{ form.as_p }}
-        {{ form.fecha_actualizacion}}
-        <input type="hidden" name="next" , value="{{ next }}" />
-        <div class="btn_opcion">
-            <a class="btn-secundary" href="{% url 'Principal' %}">Volver</a>
-            <a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>
-            <button>
-                <a href="">Habilitar/Deshabilitar</a>
-            </button>
-            <button class="envio" type="submit">Guardar Cambios</button>
-
-        </div>
-        <div>
-            <p>{{ mensaje }}</p>
-        </div>
-    </form>
-
-    {% endif %}
-
-
+        {% if perfil.id == admin.id %}
+            <form class="formato__creacion perfil_usuario ">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="hidden" name="next" , value="{{ next }}" />
+                <div class="btn_opcion">
+                    <a href="{% url 'Principal' %}">volver</a>
+                </div>
+                <div>
+                    <p>{{ mensaje }}</p>
+                </div>
+            </form>
+        {% else %}
+            <form class="formato__creacion perfil_usuario ">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {{ form.fecha_actualizacion}}
+                <input type="hidden" name="next" , value="{{ next }}" />
+                <div class="btn_opcion">
+                    <a class="btn-secundary" href="{% url 'Principal' %}">Volver</a>
+                    <a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>
+                    <button>
+                        <a href="">Habilitar/Deshabilitar</a>
+                    </button>
+                    <button class="envio" type="submit">Guardar Cambios</button>
+                </div>
+                <div>
+                    <p>{{ mensaje }}</p>
+                </div>
+            </form>
+        {% endif %}
 
     {% else %}
-    <form class="formato__creacion perfil_usuario" method="POST">
-        {% csrf_token %}
-        {{ form.tipo_id.label_tag }}
-        {{ form.tipo_id }}
-        {{ form.numero_id.label_tag }}
-        {{ form.numero_id }}
-        {{ form.first_name.label_tag }}
-        {{ form.first_name }}
-        {{ form.last_name.label_tag }}
-        {{ form.last_name }}
-        {{ form.telefono.label_tag }}
-        {{ form.telefono }}
-        {{ form.email.label_tag }}
-        {{ form.email }}
-        {{ form.tipo_usuario.label_tag }}
-        {{ form.tipo_usuario }}
+        <form class="formato__creacion perfil_usuario" method="POST">
+            {% csrf_token %}
+            {{ form.tipo_id.label_tag }}
+            {{ form.tipo_id }}
+            {{ form.numero_id.label_tag }}
+            {{ form.numero_id }}
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+            {{ form.telefono.label_tag }}
+            {{ form.telefono }}
+            {{ form.email.label_tag }}
+            {{ form.email }}
+            {{ form.tipo_usuario.label_tag }}
+            {{ form.tipo_usuario }}
 
-        <input type="hidden" name="next" , value="{{ next }}" />
-        <div class="btn_opcion">
-            <a class="btn-secundary" href="{% url 'Principal' %}">Volver</a>
-            <a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>
-            <button class="envio" type="submit">Guardar Cambios</button>
+            <input type="hidden" name="next" , value="{{ next }}" />
+            <div class="btn_opcion">
+                <a class="btn-secundary" href="{% url 'Principal' %}">Volver</a>
+                <a href="{% url 'Perfil_Editar' perfil.id %}" class="btn-primary">Editar Datos</a>
+                <button class="envio" type="submit">Guardar Cambios</button>
 
-        </div>
-        <div>
-            <p>{{ mensaje }}</p>
-        </div>
-    </form>
-
+            </div>
+            <div>
+                <p>{{ mensaje }}</p>
+            </div>
+        </form>
     {% endif %}
-
 </div>
 
 {% endblock %}

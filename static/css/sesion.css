@@ -15,6 +15,12 @@
     padding: 24px;
 }
 
+.formato__creacion input{
+    width: 60%;
+    font-size: var(--fs-xxs);
+}
+
+
 .bloque__subtitulo{
     /* display: flex; */
     text-align: center;
@@ -25,6 +31,9 @@
     padding-left: 40px;
     font-size: var(--fs-xxs);
     font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    padding: 0 3rem;
 }
 
 .formato__button{

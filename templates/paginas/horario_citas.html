@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+
+{% include 'bloques/buscador.html' %}
+
+<table class="table-admin">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Medico</th>
+            <th>Fecha</th>
+            <th>Hora Inicio</th>
+            <th>Disponible</th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for b1 in tabla %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ b1.horario.id_usuario.nombre_completo }}</td>
+            <td>{{ b1.fecha }}</td>
+            <td>{{ b1.hora_cita }}</td>
+            <td>{{ b1.disponible }}</td>
+            
+            <td>
+                <button>
+                    <a href="{% url 'Registro_Citas' %}" class="btn-primary">Tomar cita</a>
+                </button>
+
+            </td>
+            {% comment %}
+
+            <a href="{% url 'Registro_Citas' b1.id %}" class="btn-primary">Tomar cita</a>
+            <td>
+                <a href="{% url 'Perfil_Editar' b1.id %}" class="btn-secundary">Editar Datos</a>
+            </td>
+            {% endcomment %}
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
+
+
+
+{% endblock %}

@@ -7,8 +7,10 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth import *  # type: ignore
 from django.contrib.auth.decorators import *  # type: ignore
-from django.http import HttpResponse
+#from django.http import HttpResponse
 from django.views.generic import ListView
+from django.db.models import F, Value
+from django.db.models.functions import Concat
 
 
 
@@ -76,7 +78,7 @@ def iniciar_sesion(request):
                     return redirect('Principal')
 
                 else:
-                    print('Problemas de ingreso po segunda validación')
+                    print('Problemas de ingreso de segunda validación')
                     data = {
                         'titulo': 'Inicio Sesión',
                         'form': formulario,
@@ -173,25 +175,24 @@ class CuentasListView(ListView):
     #     context["titulo"] = 'Listado de cuentas'        
     #     return context   
     
-    
-    
-    
 
 @login_required
 def visualizar_cuenta(request):
-    perfil = get_object_or_404(CreacionUser, username=request.user)
-    #perfil = CreacionUser.objects.get(username=request.user)
+    print('queriendo')
+    perfil = get_object_or_404(CreacionUser, username = request.user)
+    
     data = {
         'titulo':'Tu perfil',
         'admin': request.user,
         'perfil': perfil,
         'form': PerfilUsuario(instance = perfil)
     } 
+    
     return render(request, 'paginas/mi_perfil.html', data)
 
 
 @login_required # type: ignore
-def ver_cuentas(request, pk):    
+def ver_cuentas(request,pk):    
     #if request.method == 'GET':  
     perfil = get_object_or_404(CreacionUser, pk=pk)
     #print(pk)
@@ -211,8 +212,7 @@ def ver_cuentas(request, pk):
 def editar_cuenta(request, pk):
     print("estamos jodidos")
     if request.method == 'GET':
-        cuenta = get_object_or_404(CreacionUser, pk=pk)
-        
+        cuenta = get_object_or_404(CreacionUser, pk=pk)        
         admin = request.user  
         print(admin.username)    
         form2 = PerfilUsuario(instance=cuenta)   
@@ -256,20 +256,45 @@ def  buscador(request):
     
 @login_required
 def horarioCitas(request):
+    # perfil = get_object_or_404(CreacionUser, username = request.user)
     if request.method == 'POST':
-        print('Envio horario')
-        form = CreacionHorarioCitas(request.POST) # type: ignore        
+        print('Envio horario')        
+        form = CreacionHorarioCitas(request.POST, usuario_actual = request.user) # type: ignore
+        
         if form.is_valid():
             print('guardando')            
             form.save()
             return redirect('Principal')        
     else:
         print('generando')
-        form = CreacionHorarioCitas()  
-        form.fields['id_usuario'].queryset = CreacionUser.objects.filter(tipo_usuario = 'Medico')       # type: ignore
+        form = CreacionHorarioCitas(usuario_actual = request.user)
+        # form.fields['id_usuario']= CreacionUser.objects.get(username = request.user)           # type: ignore
         
+        # form1 = CreacionHorarioCitas()
+        # admin= request.user
+        
+        # data = {
+        #     'admin': request.user,
+        #     'perfil': perfil,
+        #     'form': form, # type: ignore
+        #     'horario' : CreacionHorarioCitas() 
+        # } 
+     
+     #se debe realizar que solo tome el valor del usuario
+                
     return render(request, 'paginas/horarios.html', {'horario':form}) # type: ignore
+    #return render(request, 'paginas/horarios.html',{'form': form, 'horario': form1, 'admin': admin}) # type: ignore
 
+
+
+@login_required
+def mostrar_horario_disponible(request):
+    
+    medicos = CreacionUser.objects.all()
+    intervalos = HorarioCita.objects.filter(disponible = True)
+    
+    return render(request, 'paginas/horario_citas.html', {'tabla':intervalos, 'medico': medicos})
+    
 
 
 

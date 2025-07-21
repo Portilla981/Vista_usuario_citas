@@ -1,11 +1,11 @@
-from typing import Any, Iterable, Sequence
+
 from django import forms
-# from django.forms.widgets import _OptAttrs
+# from django.db.models.base import Model
 from .models import *
-# from django.forms.widgets import TimeInput, SelectDateWidget, _OptAttrs
 from datetime import date, datetime, time
 from django.utils import timezone
-import re
+# import re
+# from django.forms import ModelChoiceField
 
 class Formato_Contacto(forms.ModelForm):
 
@@ -144,9 +144,28 @@ class EditarUsuario(forms.ModelForm):
 class BarraBusqueda(forms.Form):
     buscar = forms.CharField(label='Buscar:', max_length=100)
 
+# Se crea la clase para personalizar el campo de id_usuario
+class UsuarioModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, obj):        
+        return obj.nombre_completo # type: ignore
 
 class CreacionHorarioCitas(forms.ModelForm):
-
+    # id_usuario = UsuarioModelChoiceField(queryset=CreacionUser.objects.filter(tipo_usuario = 'Medico'), label= 'Medico', empty_label= 'Seleccione el medico')
+    id_usuario = UsuarioModelChoiceField(queryset=CreacionUser.objects.none(), label= 'Medico', empty_label= 'Seleccione el medico', required=False)
+    
+    def __init__(self, *args, **kwargs):
+        usuario_actual = kwargs.pop('usuario_actual',None)
+        super().__init__(*args, **kwargs)
+        
+        if usuario_actual:
+            if usuario_actual.is_superuser:
+                self.fields['id_usuario'].queryset = CreacionUser.objects.filter(tipo_usuario = 'Medico') # type: ignore
+            else:
+                self.fields['id_usuario'].queryset = CreacionUser.objects.filter(pk= usuario_actual.id) # type: ignore
+                self.fields['id_usuario'].initial = usuario_actual.id
+                self.fields['id_usuario'].widget.attrs['readonly']= True
+        
+    
     class Meta:
         model = CrearHorario
         fields = '__all__'
@@ -158,7 +177,9 @@ class CreacionHorarioCitas(forms.ModelForm):
 
     def clean(self):
         print('Ingreso a validar')
-        cleaned_data = super().clean() 
+        cleaned_data = super().clean()
+        usuario = self.cleaned_data.get('id_usuario')
+        print(usuario)
         fecha_1 = self.cleaned_data.get('fecha') 
         print(fecha_1)
         hora_1 = self.cleaned_data.get('hora_inicio') 
@@ -167,27 +188,30 @@ class CreacionHorarioCitas(forms.ModelForm):
         fecha_hora = datetime.combine(fecha_1, hora_1) # type: ignore        
         hora_2 = self.cleaned_data.get('hora_final')         
         inicio = time(6,0)
-        final = time(18,0)
-        hora_espera = time(16,0)
+        final = time(19,0)
+        hora_espera = time(17,0)
         espera = timedelta(hours= 2) # type: ignore
         hora_espera = ahora + espera 
         hora_aceptada = datetime.combine(date.today(), hora_1 )+ espera        # type: ignore
-    
+        print('paso todo')
         
-        if fecha_hora < ahora:
+        if fecha_1.weekday() >= 6: # type: ignore
+            raise forms.ValidationError('La fecha debe ser entre lunes y viernes.')
+        
+        elif fecha_hora < ahora:
             raise forms.ValidationError('La fecha o la hora no son correctos.')
         
         elif hora_1 > hora_2: # type: ignore
             raise forms.ValidationError('La hora de inicio es mayor a la hora final.')
             
         elif hora_1 < inicio or hora_1 > final: # type: ignore
-            raise forms.ValidationError('La hora de inicio es incorrecta debe ser entre las 06:00 y 18:00 horas.')
+            raise forms.ValidationError('La hora de inicio es incorrecta debe ser entre las 06:00 y 19:00 horas.')
         
         elif hora_2 < inicio or hora_2 > final: # type: ignore
-            raise forms.ValidationError('La hora de final es incorrecta debe ser entre las 06:00 y 18:00 horas.')
+            raise forms.ValidationError('La hora de final es incorrecta debe ser entre las 06:00 y 19:00 horas.')
         
         elif fecha_1 == timezone.now() and hora_aceptada < hora_espera and hora_aceptada >= final: # type: ignore
             raise forms.ValidationError('La disponibilidad de la hora de inicio es dos horas después de la hora actual asi como dos horas antes de las 18:00, esto por cuestiones de facilidad y plasticidad.')
         
-        
+
         
