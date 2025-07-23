@@ -1,9 +1,6 @@
 {% extends 'index.html' %}
 
-
 {% block contenido1 %}
-
-{% include 'bloques/buscador.html' %}
 
 <table class="table-admin">
     <thead>
@@ -18,26 +15,31 @@
         </tr>
     </thead>
     <tbody>
-
-
         {% for b1 in cuentas %}
-
         <tr>
-
             <td>{{ forloop.counter}}</td>
             <td>{{b1.numero_id}}</td>
             <td>{{b1.first_name}}</td>
             <td>{{b1.last_name}}</td>
-            <td>{{b1.tipo_usuario}}</td>
-            <td>{{b1.is_active}}</td>
+            <td>{{b1.tipo_usuario}}</td>            
+            {% if b1.is_active == True %}
+                <td>Habilitado</td>    
+            {% else %}
+                <td>Deshabilitar</td>
+            {% endif %}
+            
             <td>
-                <a href="{% url 'Perfil_Usuario' b1.id %}" class="btn-primary">Ver</a>
+                <button>
+                <a href="{% url 'Perfil_Usuario' b1.id %}?accion=ver" class="btn-primary">Ver</a>
+                </button>
             </td>
-            {% comment %}
+            
             <td>
-                <a href="{% url 'Perfil_Editar' b1.id %}" class="btn-secundary">Editar Datos</a>
+                <button>
+                <a href="{% url 'Perfil_Usuario' b1.id %}?accion=habilitar" class="btn-secundary">Habilitar / Deshabilitar</a>
+                </button>
             </td>
-            {% endcomment %}
+            
 
         </tr>
 

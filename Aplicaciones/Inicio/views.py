@@ -2,6 +2,7 @@ from django.contrib import messages
 # from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse
 from .forms import *
 from django.core.mail import send_mail
 from django.conf import settings
@@ -155,32 +156,10 @@ def listar_cuentas(request):
     return render(request, 'paginas/listado_tabla.html', data)
 
 
-# Vistas basadas en clases esto esta pendiente por probar 
-@login_required # type: ignore
-class CuentasListView(ListView):
-    
-    model = CreacionUser
-    template_name = 'paginas/listado_tabla.html'
-    
-    # Sobre escritura de métodos
-    # Consultas
-    # def get_queryset(self):
-    #     return CreacionUser.objects.filter(is_superuser = False)
-    
-    # Contexto
-    # def get_context_data(self, **kwargs):
-    #     # iniciacon de la funcion
-    #     context = super().get_context_data(**kwargs)
-    #     # Datos enviados a la plantilla
-    #     context["titulo"] = 'Listado de cuentas'        
-    #     return context   
-    
-
 @login_required
 def visualizar_cuenta(request):
-    print('queriendo')
-    perfil = get_object_or_404(CreacionUser, username = request.user)
-    
+    print('Visualizando perfil')
+    perfil = get_object_or_404(CreacionUser, username = request.user)    
     data = {
         'titulo':'Tu perfil',
         'admin': request.user,
@@ -193,20 +172,33 @@ def visualizar_cuenta(request):
 
 @login_required # type: ignore
 def ver_cuentas(request,pk):    
-    #if request.method == 'GET':  
     perfil = get_object_or_404(CreacionUser, pk=pk)
-    #print(pk)
-    admin = request.user
+    accion = request.GET.get('accion')    
+    if accion == 'ver':    
+        print(f'Viendo el perfil de {perfil.nombre_completo}')
+        admin = request.user    
+        form = PerfilUsuario(instance=perfil)             
+        data = {
+            'admin': admin,
+            'perfil': perfil,
+            'titulo':'Perfil',
+            'form': form        
+        }
+        return render(request, 'paginas/mi_perfil.html', data)
     
-    form = PerfilUsuario(instance=perfil) 
+    elif accion == 'habilitar':
+        print(f'Estado {perfil.is_active}')
+        if perfil.is_active == True :
+            perfil.is_active = False
+            #perfil.save()    
+        else:
+            perfil.is_active = True        
+            #perfil.save() 
+        perfil.save() 
+        return redirect(reverse('Lista_cuentas')) 
         
-    data = {
-        'admin': admin,
-        'perfil': perfil,
-        'titulo':'Perfil',
-        'form': form        
-    }
-    return render(request, 'paginas/mi_perfil.html', data)
+    return render(request, 'paginas/listado_tabla.html')
+            
     
 @login_required # type: ignore
 def editar_cuenta(request, pk):
@@ -233,7 +225,7 @@ def editar_cuenta(request, pk):
             if form.is_valid():
                 print('Se verifica su validación')
                 form.save() 
-                return redirect('Perfil_Usuario', pk)
+                return redirect(reverse('Perfil_Usuario', pk))
 
         except ValueError:
             return render(request, 'paginas/perfil.html', {
@@ -256,48 +248,171 @@ def  buscador(request):
     
 @login_required
 def horarioCitas(request):
-    # perfil = get_object_or_404(CreacionUser, username = request.user)
     if request.method == 'POST':
         print('Envio horario')        
-        form = CreacionHorarioCitas(request.POST, usuario_actual = request.user) # type: ignore
-        
+        form = CreacionHorarioCitas(request.POST, usuario_actual = request.user)        
         if form.is_valid():
             print('guardando')            
             form.save()
             return redirect('Principal')        
     else:
-        print('generando')
+        print('Generando')
         form = CreacionHorarioCitas(usuario_actual = request.user)
-        # form.fields['id_usuario']= CreacionUser.objects.get(username = request.user)           # type: ignore
-        
-        # form1 = CreacionHorarioCitas()
-        # admin= request.user
-        
-        # data = {
-        #     'admin': request.user,
-        #     'perfil': perfil,
-        #     'form': form, # type: ignore
-        #     'horario' : CreacionHorarioCitas() 
-        # } 
-     
-     #se debe realizar que solo tome el valor del usuario
                 
-    return render(request, 'paginas/horarios.html', {'horario':form}) # type: ignore
-    #return render(request, 'paginas/horarios.html',{'form': form, 'horario': form1, 'admin': admin}) # type: ignore
+    return render(request, 'paginas/horarios.html', {'horario':form})
 
+@login_required
+def listar_horarios_medicos(request):    
+    data = {
+        'titulo':'Listado de cuentas',
+        'horarioMed': CrearHorario.objects.all()
+    }
+    return render(request, 'sesiones/listar_horarios.html', data)
+    
+@login_required # type: ignore
+def editar_horario_medicos(request, pk):
+    print('Entrando a editar horario medico')
+    horaId = get_object_or_404(CrearHorario, pk=pk) 
+    medico= horaId.id_usuario
+    if request.method == 'GET':        
+        admin = request.user  
+        print(admin.username) 
+        print(f'Horario # {horaId.pk}')         
+        # form2 = PerfilUsuario(instance=cuenta)   
+        form = Formato_editar_horario(instance=horaId, initial={'id_usuario': medico.nombre_completo, 'fecha': horaId.fecha})  
+        data = {
+            'perfil': horaId,
+            'admin': admin,            
+            'formato': form,
+            'medico':medico                
+        }
+        return render(request, 'sesiones/editar_horario.html', data)
+    else:
+        try:
+            horaId = get_object_or_404(CrearHorario, pk=pk) 
+            print(f'Entrando a Grabar {horaId.pk}' )
+            # perfil = get_object_or_404(CrearHorario, pk=pk)
+            form = Formato_editar_horario(request.POST, instance= horaId)
+            
+            if form.is_valid():                
+                print('Se verifica su validación')
+                form.save() 
+                print('Se grabo exitosamente')
+                return redirect('Lista_Horarios')
+            else:
+                print('NO se puede')
+                
+
+        except ValueError:
+            return render(request, 'sesiones/editar_horario.html', {
+                'cuenta': horaId,
+                'formato': form,
+                'error': "error al actualizar datos",
+            })
+
+    
+
+# Listar las citas disponibles
+@login_required
+def mostrar_horario_disponible(request):  
+    hoy = date.today()  
+    medicos = CrearHorario.objects.all()
+    # Filtros para la vista mayor que __gt menor q __lt mayor igual q  __gte menoir igual q __lte el dia de hoy
+    intervalos = HorarioCita.objects.filter(fecha__gte = hoy).order_by('fecha') # type: ignore
+        
+    return render(request, 'paginas/horario_citas.html', {'tabla':intervalos, 'medico': medicos})
+    
+# Tomar cita por el usuario 
+@login_required # type: ignore
+def asignar_cita(request):
+    print('Ingresando asignación')
+    if request.method == 'POST':
+        print('estamos validando')
+        id_horario = request.POST.get('cita_horario') # type: ignore
+        horario = HorarioCita.objects.get(id = id_horario)
+        if horario.estado == 'Disponible':            
+            print(horario.fecha)
+            print(horario.id) # type: ignore
+            horario.estado = 'Agendada' # type: ignore
+            horario.save()
+            cita_disponible = UsuarioCitas.objects.create(usuario = request.user, cita= horario, estado_cita = horario.estado) # type: ignore
+            print('Listos')
+            return redirect('Mis_citas')
+        else:
+            error = 'No se puede asignar la cita, no esta disponible'
+            
+    return render(request, 'paginas/horario_citas.html', {'error': error}) # type: ignore
 
 
 @login_required
-def mostrar_horario_disponible(request):
-    
-    medicos = CreacionUser.objects.all()
-    intervalos = HorarioCita.objects.filter(disponible = True)
-    
-    return render(request, 'paginas/horario_citas.html', {'tabla':intervalos, 'medico': medicos})
+def citas_usuario(request):
+    print('Entrando a grabar')
+    citas = UsuarioCitas.objects.filter(usuario = request.user)
+    #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
+    return render(request, 'sesiones/citas_usuario.html',{'citas':citas})
+
+@login_required
+def cancelar_cita_usuario(request, cita_id):
+    try:
+        print('Cancelando cita')
+        print(cita_id)
+        cita_usuario = UsuarioCitas.objects.filter(usuario = request.user, cita = cita_id).first()
+        horario = HorarioCita.objects.get(id = cita_id)
+        print(horario.fecha)
+        print(horario.id) # type: ignore
+        accion = request.GET.get('accion')
+        
+        if accion == 'cancelar':
+            cita_usuario = UsuarioCitas.objects.filter(usuario = request.user, cita = cita_id).first()
+            horario.estado = 'Disponible'  
+            horario.save()
+            print(cita_usuario) # type: ignore        
+            # cita_usuario.cita.delete()       # type: ignore
+            cita_usuario.estado_cita = 'Cancelada' # type: ignore
+            cita_usuario.save() # type: ignore
+        
+        elif accion == 'reprogramar':
+            cita_usuario = UsuarioCitas.objects.filter(usuario = request.user, cita = cita_id).first()
+            horario.estado = 'Reprogramada'  
+            horario.save()
+            print(cita_usuario) # type: ignore        
+            # cita_usuario.cita.delete()       # type: ignore
+            cita_usuario.estado_cita = 'Reprogramada' # type: ignore
+            cita_usuario.save() # type: ignore
+        
+        return redirect('Mis_citas')
+        
+            
+        
+    except UsuarioCitas.DoesNotExist:
+        raise forms.ValidationError('No tiene permiso para cancelar citas')
     
 
 
+@login_required
+def buscar_citas(request):
+    fecha = request.GET.get('fecha')
+    medico_id = request.GET.get('id_usuario')
+    horario = request.GET.get('hora_cita')
 
+    citas = HorarioCita.objects.all()
+
+    if fecha:
+        dato = citas.filter(fecha=fecha)
+    if medico_id:
+        dato = citas.filter(horario__medico_id=medico_id)
+    if horario:
+        if horario == 'manana':
+            dato = citas.filter(hora__gte='06:00', hora__lte='13:00')
+        elif horario == 'tarde':
+            dato = citas.filter(hora__gte='13:00', hora__lte='20:00')
+
+    return render(request, 'sesiones/citas_usuario.html', {'citas': dato})
+
+    
+    
+    
+    # bueno quedamos en poder realizar el filtro o busqueda 
 
 #-----------------------------------------------------
 

@@ -1,0 +1,40 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<table class="table-admin">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Medico</th>
+            <th>Fecha</th>
+            <th>Hora Inicio</th>
+            <th>Hora Final</th>
+            <th>Duracion</th>
+            <th colspan="2">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for hora in horarioMed %}
+        <tr>
+            <td>{{ forloop.counter}}</td>
+            <td>{{hora.id_usuario.nombre_completo}}</td>
+            <td>{{hora.fecha}}</td>
+            <td>{{hora.hora_inicio}}</td>
+            <td>{{hora.hora_final}}</td>            
+            <td>{{hora.duracion}}</td>
+            <td>
+                <button>
+                <a href="{% url 'Editar_Horarios' hora.id %}" class="btn-primary">Editar</a>
+                </button>
+            </td>            
+            <td>
+                <button>
+                <a href="" class="btn-secundary">Eliminar</a>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

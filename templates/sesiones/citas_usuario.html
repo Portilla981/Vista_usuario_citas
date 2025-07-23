@@ -1,0 +1,40 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<h1>Citas asignadas</h1>
+{{ error }}
+<table>
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Médico</th>
+            <th>Estado cita</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cita in citas %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ cita.cita.fecha }}</td>
+            <td>{{ cita.cita.hora_cita }}</td>
+            <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>            
+            <td>{{ cita.estado_cita }}</td>            
+            <td>
+                <button>
+                <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=cancelar">Cancelar cita</a>
+                </button>
+            </td>
+            <td>
+                <button>
+                <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=reprogramar">Reprogramar Cita</a>
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

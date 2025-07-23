@@ -80,11 +80,41 @@ class CrearHorario(models.Model):
     
             
 class HorarioCita(models.Model):
+    
+    class Estado(models.TextChoices):
+        DISPONIBLE = 'Disponible'
+        AGENDADA = 'Agendada'
+        REPROGRAMADA = 'Reprogramada'
+        CANCELADA = 'Cancelada'    
+    
     horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
     fecha = models.DateField(verbose_name='Fecha')
-    hora_cita = models.TimeField(verbose_name='Hora de inicio')# type: ignore    
-    disponible = models.BooleanField(default=True)
+    hora_cita = models.TimeField(verbose_name='Hora de inicio')    
+    #disponible = models.BooleanField(default=True)
+    estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
     
+
+class UsuarioCitas(models.Model):
+    usuario= models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Usuario')
+    cita = models.ForeignKey(HorarioCita, on_delete= models.CASCADE)
+    estado_cita = models.CharField(max_length=20, verbose_name='Estado cita')   
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
