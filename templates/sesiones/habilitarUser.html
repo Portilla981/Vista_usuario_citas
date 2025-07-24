@@ -2,20 +2,20 @@
 
 {% block contenido1 %}
 <div class="bloque__formulario">
-    <h2 class="bloque__subtitulo">Editar horario de: {{perfil.id_usuario.nombre_completo}}</h2>
-    <p>La fecha almacenada actual es: {{formato.fecha.value}}</p>    
+    <h2 class="bloque__subtitulo">Sección de Habilitar/Deshabilitar Usuarios</h2>
+    <p>Estas en el perfil de {{perfil.nombre_completo}}</p>
+    <P>Actualemete el perfil esta {{habilitado}}, si guarda cambios el estado cambiara</P>    
     <p>{{error}}</p>
     <form class="formato__creacion" method="POST">
         {% csrf_token %}
-        {{ formato.as_p }}
-        <input type="hidden" name="next" , value="{{ next }}" />
+        {{ form.as_p }}
+        
         <div class="btn_opcion">
             <button>
-                <a class="btn-secundary" href="{% url 'Lista_Horarios' %}">Cancelar</a>
+                <a class="btn-secundary" href="{% url 'Lista_cuentas' %}">Cancelar</a>
             </button>
             <button class="envio" type="submit">Guardar Cambios</button>
         </div>
-
     </form>
 
 

@@ -23,7 +23,6 @@
 
 <table class="table-admin">
     <p>{{error}}</p>
-
     <thead>
         <tr>
             <th>#</th>
@@ -49,8 +48,9 @@
                     <button type="submit">Seleccionar</button>
                 </form>
             </td>
-            {% endfor %}
+            
         </tr>
+        {% endfor %}
             {% else %}
             {% for cita in tabla %}
         <tr>            
@@ -66,8 +66,9 @@
                     <button type="submit">Seleccionar</button>
                 </form>
             </td>
-            {% endfor %}
+            
         </tr>
+        {% endfor %}
         {% endif %}
 
 

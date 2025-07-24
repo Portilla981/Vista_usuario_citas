@@ -171,32 +171,81 @@ def visualizar_cuenta(request):
 
 
 @login_required # type: ignore
-def ver_cuentas(request,pk):    
+def ver_cuentas(request,pk):
+    # Dentro de esta función se encentran dos funciones que vienen de la tabla del listado de usuarios, accionadas por dos botones utilizando la acción de los mismos reutilizando código
+    
+    # Aquí se trae el parámetro del usuario visto en la tabla con el cual se quiere manipular o accionar     
     perfil = get_object_or_404(CreacionUser, pk=pk)
-    accion = request.GET.get('accion')    
+    admin = request.user # verificar q usuario esta interactuando  
+    # variable para obtner un resultado
+    habil = perfil.is_active 
+    # Condicional            
+    if habil == True:
+        habil = 'Habilitado'
+    else:
+        habil = 'Deshabilitado'
+
+    # variable para que se verifique q acción se esta enviando desde el formulario
+    accion = request.GET.get('accion')     
+    # Condicional según el botón y la acción registrada "?accion=ver"
+    # "{% url 'Perfil_Usuario' b1.id %}?accion=habilitar"   
     if accion == 'ver':    
         print(f'Viendo el perfil de {perfil.nombre_completo}')
-        admin = request.user    
+        # formulario de tratamiento de los datos, la instancia son los datos del usuario
         form = PerfilUsuario(instance=perfil)             
         data = {
             'admin': admin,
             'perfil': perfil,
             'titulo':'Perfil',
-            'form': form        
+            'form': form, 
+            'estado':habil        
         }
         return render(request, 'paginas/mi_perfil.html', data)
-    
-    elif accion == 'habilitar':
-        print(f'Estado {perfil.is_active}')
-        if perfil.is_active == True :
-            perfil.is_active = False
-            #perfil.save()    
-        else:
-            perfil.is_active = True        
-            #perfil.save() 
-        perfil.save() 
-        return redirect(reverse('Lista_cuentas')) 
+    # Segunda acción con el botón
+    elif accion == 'habilitar':  
+        # Nueva condicional      
+        if request.method == 'GET':        
+            form = FormatoHabilitarUser(instance=perfil)              
+            data = {
+                'admin': admin,
+                'perfil': perfil,
+                'form': form,
+                'habilitado' : habil
+            }
+            return render(request, 'sesiones/habilitarUser.html', data)
         
+        else:
+            # acción cuando se quiere pasar los datos del formulario
+            print('Estamos en POST')            
+            cuenta = FormatoHabilitarUser(request.POST)
+            print(cuenta.data)
+
+            # validación del formulario 
+            if cuenta.is_valid():
+                # Esto se hace cuando se quiere agregar datos manualmente
+                motivo = cuenta.save(commit=False) # Punto de espera
+                motivo.id_usuario = perfil
+                
+                # Mini función para otro modelo
+                print(f'Estado {perfil.is_active}')
+                if perfil.is_active == True :
+                    perfil.is_active = False 
+                    estado = 'Deshabilitando'  
+                else:
+                    perfil.is_active = True 
+                    estado = 'Habilitando'
+                # Graba en una tabla       
+                perfil.save()
+                print('Cambio listo')   
+                motivo.estado = estado 
+                motivo.save() # Graba en la otr tabla 
+                print(f'Motivo listo {motivo}')
+                # Disecciona después de la función
+                return redirect(reverse('Lista_cuentas')) 
+            else:
+                
+                print(f'la cuenta es {cuenta.errors}')
+    # Fin y renderiza una pagina al final de todo  
     return render(request, 'paginas/listado_tabla.html')
             
     
@@ -233,18 +282,7 @@ def editar_cuenta(request, pk):
                 'form': form,
                 'error': "error al actualizar datos",
             })
-
-# etsoy rewalizando barra de busqueda d evalores aqui vamosssssss
-def  buscador(request):
-    formato = BarraBusqueda()
-    resultado = CreacionUser.objects.all()
-    if request.GET.get('buscar'):
-        formato = BarraBusqueda(request.GET)
-        if formato.is_valid():
-            buscar = formato.cleaned_data['buscar']
-            resultado =CreacionUser.objects.filter(nombre_incontains=buscar)
-    return render(request, 'buscador_html',{'formB': formato, 'resultsdo': resultado})
-    
+   
     
 @login_required
 def horarioCitas(request):
@@ -381,38 +419,79 @@ def cancelar_cita_usuario(request, cita_id):
             cita_usuario.save() # type: ignore
         
         return redirect('Mis_citas')
-        
-            
-        
+    
     except UsuarioCitas.DoesNotExist:
         raise forms.ValidationError('No tiene permiso para cancelar citas')
+
+
+@login_required # type: ignore
+def buscar_citas(request):   
+    citas = None  
+    titu = 'Esperando resultados'  
+    hoy = date.today()           
+    if request.method == 'POST':
+        datos = BarraBusquedaCitas(request.POST)
+        if datos.is_valid():
+            print('Entrando a buscar')
+            fecha_inicio = datos.cleaned_data['fecha_inicio']
+            fecha_final = datos.cleaned_data['fecha_final']
+            medico = datos.cleaned_data['medico'] 
+            hora = datos.cleaned_data['hora']            
+            # citas =HorarioCita.objects.filter(fecha__gte = hoy).order_by('fecha') 
+            # citas = HorarioCita.objects.all()       
+            citas = HorarioCita.objects.all().order_by('fecha')      
+            if fecha_inicio:
+                citas = citas.filter(fecha__gte = fecha_inicio)
+            if fecha_final:
+                citas = citas.filter(fecha__lte = fecha_final)
+            if medico:
+                # Aqui se marca una instancia de modelos al cual apuntan
+                citas = citas.filter(horario__id_usuario= medico )               
+            if hora == 'manana':
+                citas = citas.filter(hora_cita__gte='06:00', hora_cita__lte='12:00')
+            elif hora == 'tarde':
+                citas = citas.filter(hora_cita__gte='12:00', hora_cita__lte='20:00')    
+           
+            print('Procesandos')
+        else:
+            print('Problemas de validación del form')  
     
-
-
-@login_required
-def buscar_citas(request):
-    fecha = request.GET.get('fecha')
-    medico_id = request.GET.get('id_usuario')
-    horario = request.GET.get('hora_cita')
-
-    citas = HorarioCita.objects.all()
-
-    if fecha:
-        dato = citas.filter(fecha=fecha)
-    if medico_id:
-        dato = citas.filter(horario__medico_id=medico_id)
-    if horario:
-        if horario == 'manana':
-            dato = citas.filter(hora__gte='06:00', hora__lte='13:00')
-        elif horario == 'tarde':
-            dato = citas.filter(hora__gte='13:00', hora__lte='20:00')
-
-    return render(request, 'sesiones/citas_usuario.html', {'citas': dato})
+    else:
+        print('Ingresando primeo')
+        datos = BarraBusquedaCitas()
+        
+        
+    return render(request, 'bloques/buscador.html', {'formato': datos, 'datos':citas ,'titulo': titu})
+        
+            
 
     
     
     
     # bueno quedamos en poder realizar el filtro o busqueda 
+
+
+def busquedaUser(request):
+    if request.method == 'GET':
+        form = BusquedaUsuario(request.GET)
+        if form.is_valid():
+            numero = form.cleaned_data['identificacion']
+            tipo = form.cleaned_data['tipo_id']
+            print(numero, tipo)
+            usuario = CreacionUser.objects.filter(numero_id = numero, tipo_id = tipo)
+            
+            return render(request, 'sesiones/busqueda_usuario.html', {'dato':usuario})
+    else:
+        form = BusquedaUsuario()
+
+    return render(request, 'sesiones/busqueda_usuario.html', {'form1':form})
+
+
+
+
+
+
+
 
 #-----------------------------------------------------
 

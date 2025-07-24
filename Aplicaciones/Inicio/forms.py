@@ -85,7 +85,7 @@ class PerfilUsuario(forms.ModelForm):
     class Meta:
         model = CreacionUser
         # Se añaden tanto los campos del User como los creados en el formato adstrato
-        fields = ['tipo_id', 'numero_id', 'first_name', 'last_name', 'telefono','email', 'tipo_usuario', 'username', 'date_joined', 'last_login']
+        fields = ['tipo_id', 'numero_id', 'first_name', 'last_name', 'telefono','email', 'tipo_usuario','username', 'date_joined', 'last_login']
 
         # forma de quitar la ayuda de texto en los input
         help_texts = {
@@ -110,7 +110,7 @@ class PerfilUsuario(forms.ModelForm):
             'telefono': forms.TextInput(attrs={'readonly': True}),
             'email': forms.EmailInput(attrs={'readonly': True}),
             'tipo_usuario': forms.TextInput(attrs={'readonly': True}),
-            'is_active': forms.CheckboxInput(attrs={'readonly': True}),
+            #'is_active': forms.CheckboxInput(attrs={'readonly': True}),
             'username': forms.TextInput(attrs={'readonly': True}),
             'date_joined': forms.TextInput(attrs={'readonly': True}),
             'last_login': forms.TextInput(attrs={'readonly': True}),
@@ -123,7 +123,7 @@ class EditarUsuario(forms.ModelForm):
         model = CreacionUser
         # Se añaden tanto los campos del User como los creados en el formato abstrato
         fields = ['tipo_id', 'numero_id', 'first_name', 'last_name',
-                  'telefono', 'email', 'tipo_usuario', 'username', 'is_active']
+                  'telefono', 'email', 'tipo_usuario', 'username']
 
         # froma de qquitar la ayuda de texto en los input
         help_texts = {
@@ -133,22 +133,22 @@ class EditarUsuario(forms.ModelForm):
             'last_name': '',
             'telefono': '',
             'email': '',
-            'tipo_usuario': '',
-            'is_active': '',
+            'tipo_usuario': '',            
             'username': '',
-            'date_joined': '',
-            'last_login': '',
+            
         }
-
-
-class BarraBusqueda(forms.Form):
-    buscar = forms.CharField(label='Buscar:', max_length=100)
 
 # Se crea la clase para personalizar el campo de id_usuario
 class UsuarioModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):        
         return obj.nombre_completo # type: ignore
 
+class BarraBusquedaCitas(forms.Form):
+    fecha_inicio = forms.DateField(label='Fecha Inicial', required=False, widget= forms.DateInput(attrs={'type':'date'}))
+    fecha_final = forms.DateField(label='Fecha Final', required=False, widget= forms.DateInput(attrs={'type':'date'}))
+    medico = UsuarioModelChoiceField(label='Medico Disponible', queryset= CreacionUser.objects.filter(tipo_usuario = 'Medico'), required=False) 
+    hora = forms.ChoiceField(label='Jornada',required=False, choices= [ ('','Seleccione jornada'), ('manana', 'Mañana (08:00-12:00)'), ('tarde', 'Tarde (12:00-19:00)')])
+    
 class CreacionHorarioCitas(forms.ModelForm):
     # id_usuario = UsuarioModelChoiceField(queryset=CreacionUser.objects.filter(tipo_usuario = 'Medico'), label= 'Medico', empty_label= 'Seleccione el medico')
     # Se llama al modelo creado por la función por ser personalizada
@@ -272,4 +272,38 @@ class Formato_editar_horario(forms.ModelForm):
         
         print('paso todo')
 
+
+class FormatoHabilitarUser(forms.ModelForm):
+    
+    
+    class Meta:
+        model = HabilitarDeshabilitar
+        fields = ['motivo']  
+        #fields = '__all__'
         
+        # widgets = {
+        # 'id_usuario': forms.TextInput(attrs= {'readonly': True}),       
+        # }
+        
+        
+    def clean(self):
+        print('Ingreso a Habilitar')
+        cleaned_data = super().clean()  
+        usuario = self.cleaned_data. get('id_usuario')
+        print(usuario)
+        motivo = self.cleaned_data.get('motivo')
+        
+        if motivo is None:
+            raise forms.ValidationError('El motivo esta vació, si no va a realizar esta acción por favor salga sin guardar ')
+        
+class BusquedaUsuario(forms.Form):
+    
+    opciones=(
+        ('Cédula' ,'Cédula'),
+        ('Tarjeta Identidad', 'Tarjeta Identidad'),
+        ('Cédula Extranjería' ,'Cédula Extranjería'),
+        ('Pasaporte' , 'Pasaporte')
+        )
+    
+    tipo_id = forms.ChoiceField(label='Tipo de identificacion', choices=opciones )    
+    identificacion = forms.IntegerField(label='Numero de identificacion')

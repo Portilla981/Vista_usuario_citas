@@ -14,6 +14,9 @@
                     <ul>
                         <a href="{% url 'Lista_cuentas' %}" class="navbar__link">Listar cuentas</a>
                     </ul>
+                    <ul>
+                        <a href="{% url 'Buscar_user' %}" class="navbar__link">Buscar Usuario</a>
+                    </ul>
                     {% endif %}
                     <ul>
                         <a href="{% url 'Perfiles' %}" class="navbar__link">Mis Datos</a>
@@ -23,6 +26,9 @@
                     <a href="#" class="navbar__link">Horarios</a>
                     <ul>
                         <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
+                    </ul>
+                    <ul>
+                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Buscar Horarios</a>
                     </ul>
                 </li>                
                 <li class="navbar__item" >

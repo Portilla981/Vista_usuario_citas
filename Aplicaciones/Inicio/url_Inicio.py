@@ -12,9 +12,11 @@ urlpatterns = [
     path('sesion/crear/', registro_usuario, name='Registro_usuario'),  # type: ignore
     path('sesion/logout/', salir_sesion, name='Sesion_Cerrada'),
     path('sesion/listar/', listar_cuentas, name='Lista_cuentas'),
+    path('sesion/listar/busqueda/', busquedaUser, name='Buscar_user'),
     path('sesion/listar/horarios/', listar_horarios_medicos, name='Lista_Horarios'),
+    path('sesion/listar/horarios/buscar', buscar_citas, name='Buscar_Horarios'),
     path('sesion/listar/horarios/editar/<int:pk>/', editar_horario_medicos, name='Editar_Horarios'), # type: ignore
-    #path('sesion/listar/', CuentasListView, name='Lista_cuentas_class'), # type: ignore
+    
     path('sesion/perfil/', visualizar_cuenta, name='Perfiles'),
     path('sesion/cuenta/<int:pk>/', ver_cuentas, name='Perfil_Usuario'), # type: ignore
     path('sesion/cuenta/Editar/<int:pk>/', editar_cuenta, name='Perfil_Editar'), # type: ignore

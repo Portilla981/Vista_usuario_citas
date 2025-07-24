@@ -1,6 +1,52 @@
-<form action="GET">
-    <h2>Buscando...</h2>
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+
+<h2>Buscando... {{titulo}}</h2>
+<div>
+<form method="POST" action="" >
     {% csrf_token %}
-    {{ formB.as_p }}
-    <button type="submit">Buscar</button>
+    {{ formato.as_p}}
+    <button type="submit">Buscar cita</button>
 </form>
+</div>
+<div>
+{% if datos %}
+    
+<table>
+    <thead>
+        <tr>
+            <th>No.</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Médico</th>
+            <th>Estado cita</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for cita in datos %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ cita.fecha }}</td>
+            <td>{{ cita.hora_cita }}</td>
+            <td>{{ cita.horario.id_usuario.nombre_completo }}</td>            
+            <td>{{ cita.estado }}</td>            
+            <td>
+                <button>
+                <a href="">Seleccionar</a>
+                </button>
+            </td>            
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<p>No se encontraron resultados de su búsqueda</p>
+
+{% endif %}
+</div>
+
+{% endblock %}
+

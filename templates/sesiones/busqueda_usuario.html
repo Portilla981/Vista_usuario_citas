@@ -1,0 +1,56 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+
+<div class="bloque__formulario">
+    <h2 class="bloque__subtitulo">Buscador de Usuario</h2>
+
+    <p>{{error}}</p>
+    <form class="formato__creacion" method="GET">
+        {% csrf_token %}
+        {{ form1.as_p }}
+
+        {% if dato %}
+
+        {% for us in dato %}
+        <table>
+            <tr>
+                <td>Tipo de Identificacion:</td>
+                <td>{{us.tipo_id}}</td>
+            </tr>
+            <tr>
+                <td>Numero de identificación:</td>
+                <td>{{us.numero_id}}</td>
+            </tr>
+            <tr>
+                <td>Nombres y Apellidos: </td>
+                <td>{{us.nombre_completo}}</td>
+            </tr>
+            <tr>
+                <td>Teléfono: </td>
+                <td>{{us.telefono}}</td>
+            </tr>
+            <tr>
+                <td>Correo Electrónico: </td>
+                <td>{{us.email}}</td>
+            </tr>
+
+        </table>
+
+        {% endfor %}
+
+
+        {% else %}
+        <p>El usuario no esta dentro de la base de datos</p>
+
+        {% endif %}
+        <div>
+            <button>
+                <a class="btn-secundary" href="{% url 'Buscar_user' %}">Borrar</a>
+            </button>
+            <button class="envio" type="submit">Buscar</button>
+        </div>
+    </form>
+
+
+    {% endblock %}

@@ -55,7 +55,7 @@ class ContactarUsuario(models.Model):
     motivo = models.CharField(max_length=20, choices = Motivo.choices, verbose_name='Motivo')
     mensaje = models.TextField(max_length=200, null= False, blank= False, verbose_name='Mensaje')
     contactar = models.CharField(max_length=20, choices = ContatarM.choices, verbose_name='Medio de contacto')   
-    fecha_solicitud = models.DateTimeField(auto_now_add=True, auto_now=False)
+    fecha_solicitud = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         ordering = ['-id']        
@@ -64,10 +64,11 @@ class ContactarUsuario(models.Model):
         return f'{self.nombres} - {self.apellidos}' 
     
     
-class HabitarDeshabilitar(models.Model):    
+class HabilitarDeshabilitar(models.Model):    
     id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE)
-    motivo = models.CharField(max_length= 255, null=False, blank=False)    
-    fecha_hora = models.DateTimeField()
+    motivo = models.CharField(max_length= 255, null=False, blank=False)
+    estado = models.CharField(max_length= 20, null=False, blank=False)    
+    fecha_hora = models.DateTimeField(auto_now_add=True)
     
 
 class CrearHorario(models.Model):
@@ -77,7 +78,7 @@ class CrearHorario(models.Model):
     hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
     duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duracion de Cita')
     fecha_registro = models.DateTimeField(auto_now_add=True)
-    
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
             
 class HorarioCita(models.Model):
     
@@ -90,7 +91,6 @@ class HorarioCita(models.Model):
     horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
     fecha = models.DateField(verbose_name='Fecha')
     hora_cita = models.TimeField(verbose_name='Hora de inicio')    
-    #disponible = models.BooleanField(default=True)
     estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
     
 

@@ -3,6 +3,7 @@
 {% block contenido1 %}
 <h1>Citas asignadas</h1>
 {{ error }}
+<div style="height: 200px; overflow-y: scroll;">
 <table>
     <thead>
         <tr>
@@ -36,5 +37,6 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 {% endblock %}
