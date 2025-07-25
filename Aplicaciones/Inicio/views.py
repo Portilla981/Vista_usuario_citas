@@ -367,20 +367,43 @@ def asignar_cita(request):
     if request.method == 'POST':
         print('estamos validando')
         id_horario = request.POST.get('cita_horario') # type: ignore
+        id_usuario = request.POST.get('usuario_id') # type: ignore
+        
+        if id_usuario:
+            usuario =  get_object_or_404(CreacionUser, id= id_usuario)
+            print(f'Usuario seleccionado {usuario.nombre_completo}')
+        else:
+            usuario = request.user # Sirve para tomar el id loqueado
+        
         horario = HorarioCita.objects.get(id = id_horario)
         if horario.estado == 'Disponible':            
             print(horario.fecha)
             print(horario.id) # type: ignore
             horario.estado = 'Agendada' # type: ignore
             horario.save()
-            cita_disponible = UsuarioCitas.objects.create(usuario = request.user, cita= horario, estado_cita = horario.estado) # type: ignore
+            UsuarioCitas.objects.create(usuario = usuario, cita= horario, estado_cita = horario.estado)
+            #cita_disponible = UsuarioCitas.objects.create(usuario = request.user, cita= horario, estado_cita = horario.estado) # type: ignore
             print('Listos')
-            return redirect('Mis_citas')
+            
+            if not id_usuario or int(id_usuario) == request.user.id:
+                return redirect('Mis_citas')
+            else:
+                print(f'Se encvio satisfactoriamente el usuario {usuario.nombre_completo}')
+                return redirect('Citas_programadas')
+                
+                # # Enviar correo al usuario que ha tomado la cita
+                # send_mail(
+                #     'Cita Agendada',
+                #     f'Hola {usuario.nombre_completo}, su cita ha sido agendada para el {horario.fecha} a las {horario.hora_cita}.',
+                #     settings.EMAIL_HOST_USER,
+                #     [usuario.email],
+                #     fail_silently=False,
+                # )
+            
         else:
             error = 'No se puede asignar la cita, no esta disponible'
-            
-    return render(request, 'paginas/horario_citas.html', {'error': error}) # type: ignore
-
+            return render(request, 'paginas/horario_citas.html', {'error': error}) # type: ignore
+    return render(request, 'paginas/horario_citas.html') # type: ignore
 
 @login_required
 def citas_usuario(request):
@@ -388,6 +411,12 @@ def citas_usuario(request):
     citas = UsuarioCitas.objects.filter(usuario = request.user)
     #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
     return render(request, 'sesiones/citas_usuario.html',{'citas':citas})
+
+@login_required # type: ignore
+def citas_programadas(request):
+    print('Entrando a citas programadas')
+    citas = UsuarioCitas.objects.all()
+    return render(request, 'paginas/citas_programadas.html',{'citas':citas})
 
 @login_required
 def cancelar_cita_usuario(request, cita_id):
@@ -426,6 +455,8 @@ def cancelar_cita_usuario(request, cita_id):
 
 @login_required # type: ignore
 def buscar_citas(request):   
+    usuario_id = request.GET.get('usuario_id') or request.POST.get('usuario_id') # type: ignore
+    print(f'pasando el usuario {usuario_id}')
     citas = None  
     titu = 'Esperando resultados'  
     hoy = date.today()           
@@ -461,7 +492,7 @@ def buscar_citas(request):
         datos = BarraBusquedaCitas()
         
         
-    return render(request, 'bloques/buscador.html', {'formato': datos, 'datos':citas ,'titulo': titu})
+    return render(request,'paginas/horario_citas.html', {'formato': datos, 'datos':citas ,'titulo': titu, 'usuario_id':usuario_id})
         
             
 
@@ -470,21 +501,19 @@ def buscar_citas(request):
     
     # bueno quedamos en poder realizar el filtro o busqueda 
 
-
+@login_required
 def busquedaUser(request):
-    if request.method == 'GET':
-        form = BusquedaUsuario(request.GET)
+    form = BusquedaUsuario()
+    usuario = None
+    if request.method == 'POST':
+        form = BusquedaUsuario(request.POST)
         if form.is_valid():
             numero = form.cleaned_data['identificacion']
             tipo = form.cleaned_data['tipo_id']
             print(numero, tipo)
             usuario = CreacionUser.objects.filter(numero_id = numero, tipo_id = tipo)
-            
-            return render(request, 'sesiones/busqueda_usuario.html', {'dato':usuario})
-    else:
-        form = BusquedaUsuario()
-
-    return render(request, 'sesiones/busqueda_usuario.html', {'form1':form})
+    
+    return render(request, 'sesiones/busqueda_usuario.html', {'form':form, 'dato':usuario})
 
 
 

@@ -12,6 +12,7 @@ urlpatterns = [
     path('sesion/crear/', registro_usuario, name='Registro_usuario'),  # type: ignore
     path('sesion/logout/', salir_sesion, name='Sesion_Cerrada'),
     path('sesion/listar/', listar_cuentas, name='Lista_cuentas'),
+    path('sesion/listar/citas', citas_programadas, name='Citas_programadas'),
     path('sesion/listar/busqueda/', busquedaUser, name='Buscar_user'),
     path('sesion/listar/horarios/', listar_horarios_medicos, name='Lista_Horarios'),
     path('sesion/listar/horarios/buscar', buscar_citas, name='Buscar_Horarios'),

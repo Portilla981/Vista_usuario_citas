@@ -2,7 +2,62 @@
 
 {% block contenido1 %}
 <h2>Lista de citas</h2>
-<form method="get" action="{% url 'Registro_Citas' %}">
+<div>
+    <form method="POST" action="">
+        {% csrf_token %}
+        {{ formato.as_p}}
+        <button type="submit">Buscar cita</button>
+    </form>
+</div>
+<div>
+    {% if datos %}
+    <table class="table-admin" style="width:80%; justify-content: center; ">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Médico</th>
+                <th>Estado cita</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in datos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ cita.fecha }}</td>
+                <td>{{ cita.hora_cita }}</td>
+                <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
+                <td>{{ cita.estado }}</td>
+                <td>
+                    <form action="{% url 'Tomar_cita' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="cita_horario" value="{{ cita.id }}">
+                        {% if usuario_id %}
+                            <input type="hidden" name="usuario_id" value="{{ usuario_id }}">    
+                        {% endif %}
+                        <button type="submit">Seleccionar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <p>No se encontraron resultados de su búsqueda</p>
+
+    {% endif %}
+</div>
+
+
+
+
+
+{% comment %}
+__________________________________________________________________________
+<!-- <form method="get" action="{% url 'Registro_Citas' %}">
     <label for="fecha">Fecha:</label>
     <input type="date" id="fecha" name="fecha">
     <label for="medico">Médico:</label>
@@ -19,7 +74,7 @@
         <option value="tarde">Tarde</option>
     </select>
     <button type="submit">Buscar</button>
-</form>
+</form> -->
 
 <table class="table-admin">
     <p>{{error}}</p>
@@ -40,7 +95,7 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
             <td>{{ cita.fecha }}</td>
-            <td>{{ cita.hora_cita }}</td>            
+            <td>{{ cita.hora_cita }}</td>
             <td>
                 <form action="{% url 'Tomar_cita' %}" method="post">
                     {% csrf_token %}
@@ -48,17 +103,17 @@
                     <button type="submit">Seleccionar</button>
                 </form>
             </td>
-            
+
         </tr>
         {% endfor %}
-            {% else %}
-            {% for cita in tabla %}
-        <tr>            
+        {% else %}
+        {% for cita in tabla %}
+        <tr>
             <td>{{ forloop.counter }}</td>
             <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
             <td>{{ cita.fecha }}</td>
-            <td>{{ cita.hora_cita }}</td>            
-            <td>{{ cita.estado }}</td>            
+            <td>{{ cita.hora_cita }}</td>
+            <td>{{ cita.estado }}</td>
             <td>
                 <form action="{% url 'Tomar_cita' %}" method="post">
                     {% csrf_token %}
@@ -66,24 +121,12 @@
                     <button type="submit">Seleccionar</button>
                 </form>
             </td>
-            
+
         </tr>
         {% endfor %}
         {% endif %}
-
-
-
-
-
-
-
-
-            {% comment %}
-            <a href="{% url 'Registro_Citas' b1.id %}" class="btn-primary">Tomar cita</a>
-            <td>
-                <a href="{% url 'Perfil_Editar' b1.id %}" class="btn-secundary">Editar Datos</a>
-            </td>
-            {% endcomment %}
     </tbody>
 </table>
+{% endcomment %}
+
 {% endblock %}
