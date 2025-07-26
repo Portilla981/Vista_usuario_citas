@@ -2,7 +2,23 @@
 
 {% block contenido1 %}
 
-<h2>Todas las citas</h2>
+<h2>Citas Realizadas</h2>
+<div>
+    <form method="GET" action="">
+        {% csrf_token %}
+        <label for="estado">Filtrar por estado:</label>
+        <select name="estado" id="estado">
+            <option value="">Todas</option>
+            <option value="Agendada">Asignadas</option>
+            <option value="Cancelada">Canceladas</option>
+            <option value="Reprogramada">Reprogramadas</option>
+        </select>
+        <button type="submit">Realizar Filtro</button>
+        <button>
+            <a class="btn-secundary" href="{% url 'Citas_programadas' %}">Borrar</a>
+        </button>
+    </form>
+</div>
 <div style="height: 250px; overflow-y: scroll;">
 <table style="width:80%; justify-content: center; ">
     <tr>

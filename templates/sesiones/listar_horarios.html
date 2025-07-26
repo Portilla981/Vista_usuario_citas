@@ -1,43 +1,61 @@
 {% extends 'index.html' %}
 
 {% block contenido1 %}
-<div style="height: 250px; overflow-y: scroll;">
-
-<table class="table-admin" style="width:80%; justify-content: center; ">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Medico</th>
-            <th>Fecha</th>
-            <th>Hora Inicio</th>
-            <th>Hora Final</th>
-            <th>Duracion</th>
-            <th colspan="2">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for hora in horarioMed %}
-        <tr>
-            <td>{{ forloop.counter}}</td>
-            <td>{{hora.id_usuario.nombre_completo}}</td>
-            <td>{{hora.fecha}}</td>
-            <td>{{hora.hora_inicio}}</td>
-            <td>{{hora.hora_final}}</td>            
-            <td>{{hora.duracion}}</td>
-            <td>
-                <button>
-                <a href="{% url 'Editar_Horarios' hora.id %}" class="btn-primary">Editar</a>
-                </button>
-            </td>            
-            <td>
-                <button>
-                <a href="" class="btn-secundary">Eliminar</a>
-                </button>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <h2>Listado de Horarios</h2>
+<div>
+    <form method="GET" action="">
+        {% csrf_token %}
+        <label for="medico">Filtrar por Medico:</label>
+        <select name="medico" id="medico.id">
+            <option value="">Todos los medicos</option>
+            {% for medico in medicos %}
+            <option value="{{medico.id}}">{{medico.nombre_completo}}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Realizar Filtro</button>
+        <button>
+            <a class="" href="{% url 'Lista_Horarios' %}">Borrar</a>
+        </button>
+    </form>
 </div>
-
+<div style="height: 250px; overflow-y: scroll; width: 100%;">
+    
+    <table class="table-admin" style="width:90%; ">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Medico</th>
+                <th>Fecha</th>
+                <th>Hora Inicio</th>
+                <th>Hora Final</th>
+                <th>Duracion</th>
+                <th colspan="2">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hora in horarioMed %}
+            <tr>
+                <td>{{ forloop.counter}}</td>
+                <td>{{hora.id_usuario.nombre_completo}}</td>
+                <td>{{hora.fecha}}</td>
+                <td>{{hora.hora_inicio}}</td>
+                <td>{{hora.hora_final}}</td>
+                <td>{{hora.duracion}}</td>
+                <td>
+                    <button>
+                        <a href="{% url 'Editar_Horarios' hora.id %}" class="btn-primary">Editar</a>
+                    </button>
+                </td>
+                <td>
+                    <button>
+                        <a href="" class="btn-secundary">Eliminar</a>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
 {% endblock %}

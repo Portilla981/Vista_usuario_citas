@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+{% block contenido1 %}
+
+<h2>Lista de Asistencia a Citas</h2>
+<div>
+    <button>
+        <a href="{% url 'Asistencia_user' %}">Ir a Registro de Asistencia</a>
+    </button>
+</div>
+<div style="height: 250px; overflow-y: scroll; width: 75%;">
+    <table class="table-admin" style="width: 90%;" ">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Médico</th>
+                <th>Estado cita</th>
+                <th>Asistencia</th>                
+            </tr>
+        </thead>        
+        <tbody> 
+            {% for cita in datos %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ cita.usuario.nombre_completo}}</td>
+                <td>{{ cita.cita.fecha }}</td>
+                <td>{{ cita.cita.hora_cita }}</td>
+                <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
+                <td>{{ cita.cita.estado }}</td>
+                {% if cita.cita.asistencia == True %}
+                <td>Asistió</td>
+                {% else %}
+                <td>Esperando</td>
+                {% endif %}
+                
+            </tr>
+            {% endfor %}
+        </tbody> 
+    </table>    
+</div>
+
+{% endblock %}

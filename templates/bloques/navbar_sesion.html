@@ -27,9 +27,13 @@
                     <ul>
                         <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
                     </ul>
+                    
+                    {% comment %}
                     <ul>
-                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Buscar Horarios</a>
+                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Buscar Horarios</a> 
                     </ul>
+                    {% endcomment %}
+                        
                 </li>                
                 <li class="navbar__item" >
                     <a href="#" class="navbar__link">Citas</a>
@@ -39,6 +43,9 @@
                     </ul>
                     <ul>
                         <a href="{% url 'Citas_programadas' %}" class="navbar__link">Lista Citas Programadas</a>
+                    </ul>
+                    <ul>
+                        <a href="{% url 'Asistencia_Citas' %}" class="navbar__link">Lista Asistencia Citas</a>
                     </ul>
                     <ul>
                         <a href="{% url 'Mis_citas' %}" class="navbar__link">Mis citas</a>
@@ -58,6 +65,13 @@
                         <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
                     </ul>
                     {% endif %}
+                    <ul>
+                        <a href="{% url 'Asistencia_user' %}" class="navbar__link">Registro asistencia</a>
+                    </ul>
+                    <ul>
+                        <a href="" class="navbar__link">Lista asistencia</a>
+                    </ul>
+
                 </li>
                 <li class="navbar__item">
                     <a href="#" class="navbar__link">Historia clínica</a>

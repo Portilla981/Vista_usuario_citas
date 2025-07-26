@@ -1,8 +1,4 @@
-{% extends 'index.html' %}
-
-{% block contenido1 %}
-
-<h2>Buscando... {{titulo}}</h2>
+<h2>Buscando. en el momento no se esta usando a la espera de la eliminacion.. {{titulo}}</h2>
 <div>
 <form method="POST" action="" >
     {% csrf_token %}
@@ -11,8 +7,7 @@
 </form>
 </div>
 <div>
-{% if datos %}
-    
+{% if datos %}    
 <table>
     <thead>
         <tr>
@@ -48,5 +43,5 @@
 {% endif %}
 </div>
 
-{% endblock %}
+
 

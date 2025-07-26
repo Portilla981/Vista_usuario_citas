@@ -2,16 +2,20 @@
 
 {% block contenido1 %}
 <h2>Lista de citas</h2>
+<div style=" display: flex; justify-content: space-between; ">
 <div>
     <form method="POST" action="">
         {% csrf_token %}
         {{ formato.as_p}}
         <button type="submit">Buscar cita</button>
+        <button>
+            <a href="{% url 'Buscar_Horarios' %}"> Cancelar</a>
+        </button>
     </form>
 </div>
-<div>
+<div style="height: 200px; overflow-y: scroll; width: 75%;">
     {% if datos %}
-    <table class="table-admin" style="width:80%; justify-content: center; ">
+    <table class="table-admin" style="width: 90%;" ">
         <thead>
             <tr>
                 <th>No.</th>
@@ -50,7 +54,7 @@
 
     {% endif %}
 </div>
-
+</div>
 
 
 

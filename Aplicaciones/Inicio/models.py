@@ -30,7 +30,9 @@ class CreacionUser(AbstractUser):
     tipo_usuario = models.CharField(max_length=20, choices = Tipo_User.choices, default = Tipo_User.PACIENTE, verbose_name='Tipo Usuario')    
     fecha_actualizacion = models.DateTimeField (auto_now=True, verbose_name='Ultima Actualización')
     nombre_completo= models.CharField(max_length = 100, null=False, blank= False, verbose_name='Nombre completo') 
+    cambiar_contrasena = models.BooleanField(default=True, verbose_name='Cambiar contraseña')  
     
+    # Función automática para formar el nombre completo al crear el usuario 
     def save(self, *args, **kwargs):
         self.nombre_completo = f'{self.first_name} {self.last_name}'
         super().save(*args, **kwargs)    
@@ -76,7 +78,7 @@ class CrearHorario(models.Model):
     fecha = models.DateField(null=False, blank=False, verbose_name='Fecha de horario')
     hora_inicio = models.TimeField(null=False, blank=False, default= '08:00', verbose_name='Hora de inicio')# type: ignore
     hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
-    duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duracion de Cita')
+    duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duración de Cita')
     fecha_registro = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
             
@@ -92,6 +94,7 @@ class HorarioCita(models.Model):
     fecha = models.DateField(verbose_name='Fecha')
     hora_cita = models.TimeField(verbose_name='Hora de inicio')    
     estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
+    asistencia = models.BooleanField(default=False, verbose_name='Asistencia', null=True, blank=True)
     
 
 class UsuarioCitas(models.Model):
@@ -113,35 +116,6 @@ class UsuarioCitas(models.Model):
 
 
 
-
-
-
-
-
-# Cracion de otro modelo de usuarios 
-'''class RegistroUsuario(models.Model):
-    nombres = models.CharField(max_length=50, null = False, blank = False, verbose_name='Nombres:')
-    apellidos = models.CharField(max_length=50, null = False, blank = False, verbose_name='Apellidos:')
-    telefono = models.BigIntegerField(null = False, blank = False, verbose_name='Teléfono:')
-    email = models.EmailField(unique=True, max_length=255, null = False, blank = False, verbose_name='Correo Electrónico:')
-    tipo_usuario = models.IntegerField(choices = OPC_TIPO_USU, default = 0, verbose_name='Tipo Usuario:')
-    fecha_nacimiento= models.DateField(default=datetime.now, verbose_name='Fecha de Nacimiento')
-    nombre_usuario = models.CharField(max_length=20, null = False, blank = False, verbose_name='Nombre Usuario:')
-    fecha_creacion= models.DateField(auto_now=True, verbose_name='Fecha de Creacion')
-    hora_creacion=models.TimeField(auto_now=True, verbose_name='Hora de Creacion')
-    ultimo_acceso =  models.DateTimeField(auto_now_add=True, verbose_name='Ultimo ingreso')        
-    passwor_1 = models.CharField(max_length=20,  null = False, blank = False, verbose_name='Contraseña')
-    passwor_2 = models.CharField(max_length=20,  null = False, blank = False, verbose_name='Repita Contraseña')    
-    estado = models.BooleanField(default= True, verbose_name= 'Estado Usuario')
-    
-        
-    class Meta:
-        ordering = ['-id'] 
-        
-    def __str__(self):
-        return f'{self.nombres} - {self.apellidos} '   '''
-    
-    
 
 
 

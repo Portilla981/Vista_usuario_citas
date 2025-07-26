@@ -12,10 +12,19 @@
 </head>
 
 <body>
+
     {% if user.is_authenticated %}
         {% include 'bloques/navbar_sesion.html' %}
     {% else %}
         {% include 'bloques/nav_var.html' %}
+    {% endif %}
+    {% if messages %}
+        <ul class="messages">
+            {% for mensaje in messages %}
+                <li{% if message.tags %} class="{{ mensaje.tags }}"{% endif %}>{{ mensaje }}</li>
+                <a href="{% url 'Principal' %}" style="margin-left:10px; color:red; text-decoration:none;">[Cerrar]</a>
+            {% endfor %}  
+        </ul>
     {% endif %}
     
     {% block contenido1 %}

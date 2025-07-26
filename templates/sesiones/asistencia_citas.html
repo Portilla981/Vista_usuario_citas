@@ -1,0 +1,94 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<div style="display: flex; align-items: center;">
+    <div class="bloque__formulario">
+        <h2 class="bloque__subtitulo">Buscador de Usuario</h2>
+        <p>{{error}}</p>
+        <form class="formato__creacion" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="hidden" name="cita_id" value="">
+            <div>
+                <button>
+                    <a class="" href="{% url 'Asistencia_user' %}">Borrar</a>
+                </button>
+                <button class="envio" name="buscar_usuario" type="submit">Buscar</button>
+                <button>
+                    <a href="{% url 'Asistencia_Citas' %}">Ir a Listado de Asistencia</a>
+                </button>
+            </div>
+        </form>
+    </div>
+    <div style="height: 250px; overflow-y: scroll; width: 75%;">
+
+        {% if citas or datos %}
+        <table class="table-admin" style="width: 90%;" ">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Médico</th>
+                <th>Estado cita</th>
+                <th>Asistencia</th>                
+            </tr>
+        </thead>
+        {% if citas %}
+        <tbody> 
+            {% for cita in citas %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ cita.usuario.nombre_completo}}</td>
+                <td>{{ cita.cita.fecha }}</td>
+                <td>{{ cita.cita.hora_cita }}</td>
+                <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
+                <td>{{ cita.cita.estado }}</td>
+                {% if cita.cita.asistencia == True %}
+                <td>Asistió</td>
+                {% else %}
+                <td>Esperando</td>
+                {% endif %}
+                
+            </tr>
+            {% endfor %}
+            </tbody>
+            
+            {% else %}
+            <tbody>
+                {% for cita in datos %}   
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ cita.usuario.nombre_completo}}</td>
+                <td>{{ cita.cita.fecha }}</td>
+                <td>{{ cita.cita.hora_cita }}</td>
+                <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
+                <td>{{ cita.cita.estado }}</td>
+                {% if cita.cita.asistencia == True %}
+                <td>Asistió</td>
+                {% else %}
+                <td>Esperando</td>
+                {% endif %}
+                <td>
+                    <form action="" method=" post">
+            {% csrf_token %}
+            <input type="hidden" name="cita_asistencia" value="{{ cita.id }}">
+            <button type="submit">Cambiar Asistencia</button>
+            </form>
+            </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+            {% endif %}
+        </table>
+
+        {% else %}
+        <p>No se encontraron resultados de su búsqueda</p>
+
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
