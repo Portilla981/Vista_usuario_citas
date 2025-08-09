@@ -360,6 +360,7 @@ def editar_horario_medicos(request, pk):
 # Listar las citas disponibles
 @login_required
 def mostrar_horario_disponible(request):  
+    # Esta sin funcionamiento hasta el moemnto
     hoy = date.today()  
     medicos = CrearHorario.objects.all()
     # Filtros para la vista mayor que __gt menor q __lt mayor igual q  __gte menoir igual q __lte el dia de hoy
@@ -387,7 +388,7 @@ def asignar_cita(request):
             print(horario.id) # type: ignore
             horario.estado = 'Agendada' # type: ignore
             horario.save()
-            UsuarioCitas.objects.create(usuario = usuario, cita= horario, estado_cita = horario.estado)
+            UsuarioCitas.objects.create(usuario = usuario, cita= horario)
             #cita_disponible = UsuarioCitas.objects.create(usuario = request.user, cita= horario, estado_cita = horario.estado) # type: ignore
             print('Listos')
             
@@ -417,18 +418,30 @@ def asignar_cita(request):
 
 @login_required
 def citas_usuario(request):
-    print('Entrando a grabar')
+    print('Entrando a mis citas')
     citas = UsuarioCitas.objects.filter(usuario = request.user)
     #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
     return render(request, 'sesiones/citas_usuario.html',{'citas':citas})
 
 @login_required # type: ignore
+def citas_medico(request):
+    print('Entrando a citas por medico medicos')
+    # Se filtran las citas por el usuario que esta logueado
+    medico = CreacionUser.objects.get(username =request.user) # type: ignore
+    print(f'El medico es {medico.pk}')
+    citas = UsuarioCitas.objects.filter(cita__horario__id_usuario= medico.pk).order_by('cita__fecha') # type: ignore
+    #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
+    return render(request, 'sesiones/citas_medico.html',{'citas':citas})
+
+
+
+@login_required # type: ignore
 def citas_programadas(request):
     print('Entrando a citas programadas')
-    estado = request.GET.get('estado')
-    citas = UsuarioCitas.objects.all()
+    estado = request.POST.get('estado')
+    citas = UsuarioCitas.objects.all().order_by('cita__fecha')
     if estado:
-        citas = citas.filter(estado_cita=estado)
+        citas = citas.filter(cita__estado=estado).order_by('cita__fecha')
     return render(request, 'paginas/citas_programadas.html',{'citas':citas})
 
 @login_required
@@ -549,10 +562,10 @@ def busqueda_AsitenciaUser(request):
             uno = UsuarioCitas.objects.get(pk = cita_id)
             print(f'citas encontradas {uno.cita.asistencia}') # type: ignore
             if uno.cita.asistencia == True:
-                uno.cita.asistencia = False
+                # uno.cita.asistencia = False
                 uno.cita.save() 
             else:
-                uno.cita.asistencia = True
+                # uno.cita.asistencia = True
                 uno.cita.save()
             print(f'cita actualizada {uno.cita.asistencia}') # type: ignore         
     
@@ -562,12 +575,117 @@ def busqueda_AsitenciaUser(request):
 # listado de asiastencia de citas
 @login_required # type: ignore
 def asistencia_citas(request):
-    asistencia = UsuarioCitas.objects.filter(cita__asistencia = True).order_by('cita__fecha')
+    asistencia = UsuarioCitas.objects.filter(cita__asistencia = "Asistio").order_by('cita__fecha')
     
     return render(request, 'sesiones/lista_asistencia.html', {'datos':asistencia})
 
 
+@login_required  # type: ignore
+def registrar_historia_clinica(request):
+    medico = request.user
+    form = FormularioHistoriaClinica()
+    
+    if request.method == 'POST':
+        num = request.POST.get('buscar_paciente')  # type: ignore
+        grabar = request.POST.get('guardar_historia')  # type: ignore
+        print('Entrando a registrar historia clinica')
+        
+        if 'buscar_paciente' in request.POST:
+        # Se obtiene el numero de id del paciente a buscar    
+            print(f'Buscando paciente con numero de id: {num}')
+            paciente = CreacionUser.objects.filter(numero_id=num).first()  # type: ignore
+            id_cita = UsuarioCitas.objects.filter(usuario = paciente).first()  # type: ignore
+            if paciente:
+                print(f'El paciente es {paciente} y la cita es {id_cita.cita} del medico {id_cita.cita.horario.id_usuario.nombre_completo}') # type: ignore
+               # Si se encuentra el paciente, se obtienen sus citas y se renderiza el formulario    
+            else: 
+                print('Paciente no encontrado')
+            if paciente: # type: ignore
+                print(f'Paciente encontrado: {paciente.nombre_completo}')
+                citas = UsuarioCitas.objects.filter(usuario__username = paciente).order_by('cita__fecha')
+                consulta = HistoriaClinica.objects.filter(id_cita__usuario = paciente).order_by('id_cita__cita__fecha') # type: ignore
+                print(f'Historias clinicas del paciente encontrado: {consulta}')
+                print(f'Citas del paciente encontrado: {citas}')
+                form = FormularioHistoriaClinica(id_cita = paciente) # type: ignore
+                return render(request, 'sesiones/historia_clinica.html', {'form': form, 'paciente': paciente, 'citas': citas, 'consulta': consulta})   
+            # else:        
+            #     print('Paciente no encontrado')
+    
+            #     return render(request, 'sesiones/historia_clinica.html', {'form': form})
 
+                
+    
+        elif 'guardar_historia' in request.POST:            
+            print('Guardando historia clinica')
+            id_cita = request.POST.get('id_cita') # type: ignore
+            motivo = request.POST.get('motivo_consulta') # type: ignore
+            diagnostico = request.POST.get('diagnostico') # type: ignore
+            tratamiento = request.POST.get('tratamiento') # type: ignore
+            print(f'ID de cita: {id_cita}, motivo: {motivo}, diagnostico: {diagnostico}, tratamiento: {tratamiento}')
+            form = FormularioHistoriaClinica()
+            # Validaciones de los campos del formulario
+            if not id_cita:
+                raise forms.ValidationError('Debe seleccionar una cita para continuar.')
+            elif not motivo:
+                raise forms.ValidationError('El motivo de consulta es obligatorio.')                
+            elif not diagnostico:
+                raise forms.ValidationError('El diagnóstico es obligatorio.')   
+            elif not tratamiento:
+                raise forms.ValidationError('El tratamiento es obligatorio.')   
+            elif len(motivo) < 10:   
+                raise forms.ValidationError('El motivo de consulta debe tener al menos 10 caracteres.')
+            elif len(diagnostico) < 10:   
+                raise forms.ValidationError('El diagnóstico debe tener al menos 10 caracteres.')    
+            elif len(tratamiento) < 10:   
+                raise forms.ValidationError('El tratamiento debe tener al menos 10 caracteres.')    
+            
+            else:
+                # Si el formulario es enviado, se crea una instancia del formulario con los datos del POST
+                historia = HistoriaClinica.objects.create(id_cita_id = id_cita, motivo_consulta = motivo, diagnostico = diagnostico, tratamiento = tratamiento) # type: ignore
+                historia.save()
+                messages.success(request, 'Historia clinica guardada exitosamente')
+                return redirect('Historia_Clinica') 
+            
+            
+            
+            
+            # form = FormularioHistoriaClinica(request.POST, id_cita = id_cita) # type: ignore
+            # print(f'ID de cita: {id_cita}')
+            
+            # print(f'Formulario recibido:') # type: ignore
+            # print(form.data.get('id_cita')) # type: ignore
+            # print(form.data.get('motivo_consulta')) # type: ignore
+            # print(form.data.get('diagnostico')) # type: ignore
+            # print(form.data.get('tratamiento')) # type: ignore
+            
+            # #print(form.id_cita)
+            # if form.is_valid():
+            #     historia = form.save(commit=False)
+            #     print('Historia clinica validada y lista para guardar')
+            #     historia.medico = medico  # type: ignore            
+            #     historia.id_cita = id_cita  # type: ignore
+            #     print("esperando para guardar")
+            #     historia.save()
+            #     messages.success(request, 'Historia clinica guardada exitosamente')
+            #     return redirect('Registrar_historia_clinica') 
+            # else:
+            #     print('Error al guardar historia clinica')
+            #     #messages.error(request, 'Error al guardar historia clinica, por favor verifique los datos')
+            #     #return render(request, 'sesiones/historia_clinica.html', {'form': form, 'error': 'Error al guardar historia clinica'})     
+    
+    
+    elif medico:
+        form = FormularioHistoriaClinica(initial= {'medico':medico.pk}) # type: ignore
+
+
+
+    else:        
+        print('Paciente no encontrado')
+        
+        
+    
+    
+    return render(request, 'sesiones/historia_clinica.html', {'form': form})
 
 
 

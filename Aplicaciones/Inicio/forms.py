@@ -4,8 +4,8 @@ from django import forms
 from .models import *
 from datetime import date, datetime, time
 from django.utils import timezone
-# import re
-# from django.forms import ModelChoiceField
+import re # con esta importacion se hace validaciones de expresiones regulares de nombres
+from django.forms import ModelChoiceField
 
 class Formato_Contacto(forms.ModelForm):
 
@@ -307,3 +307,68 @@ class BusquedaUsuario(forms.Form):
     
     tipo_id = forms.ChoiceField(label='Tipo de identificacion', choices=opciones )    
     identificacion = forms.IntegerField(label='Numero de identificacion')
+    
+class FormularioHistoriaClinica(forms.ModelForm):
+    
+    class Meta:
+        model = HistoriaClinica
+        fields = ['id_cita', 'motivo_consulta', 'diagnostico', 'tratamiento']
+        widgets = {
+            'id_cita': forms.Select(attrs={'class': 'form-control'}), 
+            'motivo_consulta': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'diagnostico': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'tratamiento': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
+       
+    def __init__(self, *args, **kwargs):
+        paciente = kwargs.pop('id_cita', None)
+        #medico = kwargs.pop('medico', None)
+        super().__init__(*args, **kwargs)
+        
+        if paciente:            
+            # self.fields['medico'].initial = CreacionUser.objects.get(username = medico) # type: ignore
+            # self.fields['medico'].label_from_instance = lambda obj: f'{obj.nombre_completo}' # type: ignore
+            self.fields['id_cita'].queryset = UsuarioCitas.objects.filter(usuario = paciente).order_by('cita__fecha') # type: ignore
+            self.fields['id_cita'].label_from_instance = lambda obj: f'0{obj.cita.id} - {obj.cita.fecha} - {obj.cita.hora_cita}' # type: ignore
+            self.fields['id_cita'].empty_label = 'Seleccione la cita' # type: ignore            
+            # self.fields['id_cita'].widget.attrs['readonly'] = True
+            # #self.fields['medico'].widget.attrs['disabled'] = True
+
+            # self.fields['id_cita'].label = 'Id Cita'
+            # self.fields['medico'].label = 'Medico'      
+            self.fields['motivo_consulta'].placeholder = 'Ingrese el motivo de la consulta' # type: ignore
+            self.fields['diagnostico'].placeholder = 'Ingrese el diagnóstico' # type: ignore
+            self.fields['tratamiento'].placeholder = 'Ingrese el tratamiento a seguir' # type: ignore
+            
+        else:
+            # self.fields['medico'].queryset = CreacionUser.objects.filter(tipo_usuario='Medico') # type: ignore
+            # self.fields['medico'].label_from_instance = lambda obj: f'{obj.nombre_completo}' # type: ignore
+            self.fields['id_cita'].queryset = UsuarioCitas.objects.none() # type: ignore
+            #self.fields['medico'].widget.attrs['disabled'] = True
+        
+
+    def clean(self):
+        print("Ingresando a limpiar historia clinica")
+        cleaned_data = super().clean()
+        id_cita = cleaned_data.get('id_cita')
+        if not id_cita:
+            raise forms.ValidationError('Debe seleccionar una cita para continuar.')
+        print(id_cita)        
+        
+        motivo_consulta = cleaned_data.get('motivo_consulta')
+        diagnostico = cleaned_data.get('diagnostico')
+        tratamiento = cleaned_data.get('tratamiento')           
+        if not motivo_consulta:
+            raise forms.ValidationError('El motivo de consulta es obligatorio.')                
+        if not diagnostico:
+            raise forms.ValidationError('El diagnóstico es obligatorio.')   
+        if not tratamiento:
+            raise forms.ValidationError('El tratamiento es obligatorio.')   
+        if len(motivo_consulta) < 10:   
+            raise forms.ValidationError('El motivo de consulta debe tener al menos 10 caracteres.')
+        if len(diagnostico) < 10:   
+            raise forms.ValidationError('El diagnóstico debe tener al menos 10 caracteres.')    
+        if len(tratamiento) < 10:   
+            raise forms.ValidationError('El tratamiento debe tener al menos 10 caracteres.')    
+        return cleaned_data
+    

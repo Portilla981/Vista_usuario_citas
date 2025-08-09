@@ -4,7 +4,7 @@
 
 <h2>Citas Realizadas</h2>
 <div>
-    <form method="GET" action="">
+    <form method="POST" action="">
         {% csrf_token %}
         <label for="estado">Filtrar por estado:</label>
         <select name="estado" id="estado">
@@ -19,30 +19,33 @@
         </button>
     </form>
 </div>
-<div style="height: 250px; overflow-y: scroll;">
-<table style="width:80%; justify-content: center; ">
-    <tr>
-        <th>No.</th>
-        <th>Usuario</th>
-        <th>Fecha</th>
-        <th>Hora</th>
-        <th>Medico</th>
-        <th>Estado</th>
-        <th>Registro</th>
+<div style="height: 200px; overflow-y: scroll;">
+    <table style="width:80%; justify-content: center; ">
+        <tr>
+            <th>No.</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Medico</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Asistencia</th>
 
-    </tr>
-    {% for cita in citas %}
-    <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ cita.usuario.nombre_completo }}</td>
-        <td>{{ cita.cita.fecha }}</td>
-        <td>{{ cita.cita.hora_cita }}</td>
-        <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
-        <td>{{ cita.estado_cita }}</td>
-        <td>{{ cita.fecha_registro }}</td>
-    </tr>
-    {% endfor %}
-</table>
+        </tr>
+        {% for cita in citas %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ cita.usuario.nombre_completo }}</td>
+            <td>{{ cita.cita.fecha }}</td>
+            <td>{{ cita.cita.hora_cita }}</td>
+            <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
+            <td>{{ cita.cita.estado }}</td>
+            <td>{{ cita.fecha_registro }}</td>
+            <td>{{ cita.cita.asistencia }}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
 </div>
 
 {% endblock contenido1 %}

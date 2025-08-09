@@ -23,8 +23,10 @@ urlpatterns = [
     path('sesion/cuenta/<int:pk>/', ver_cuentas, name='Perfil_Usuario'), # type: ignore
     path('sesion/cuenta/Editar/<int:pk>/', editar_cuenta, name='Perfil_Editar'), # type: ignore
     path('sesion/cuenta/horarios/', horarioCitas, name='Registro_horario'), # type: ignore
+    path('sesion/cuenta/historia_clinica/', registrar_historia_clinica, name='Historia_Clinica'), # type: ignore
     path('sesion/cuenta/citas/', mostrar_horario_disponible, name='Registro_Citas'), # type: ignore
     path('sesion/cuenta/cita_asignada/', asignar_cita, name='Tomar_cita'), # type: ignore
+    path('sesion/cuenta/cita_med/',citas_medico, name='Med_Cita_Asig'), # type: ignore
     path('sesion/cuenta/mis_citas/', citas_usuario, name='Mis_citas'), # type: ignore
     path('sesion/cuenta/mis_citas/cancelar/<int:cita_id>/', cancelar_cita_usuario, name='Cancelar_citas'), # type: ignore
 

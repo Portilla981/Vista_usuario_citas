@@ -10,9 +10,9 @@
             <th>No.</th>
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Médico</th>
+            <th>Paciente</th>
             <th>Estado cita</th>
-            <th colspan="2">Acciones</th>
+            <th colspan="3">Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -21,9 +21,9 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ cita.cita.fecha }}</td>
             <td>{{ cita.cita.hora_cita }}</td>
-            <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>            
-            <td>{{ cita.estado_cita }}</td> 
-            {% if cita.estado_cita == 'Agendada' %}           
+            <td>{{ cita.usuario.nombre_completo }}</td>            
+            <td>{{ cita.cita.estado }}</td> 
+            {% if cita.cita.estado == 'Agendada' %}           
             <td>
                 <button>
                 <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=cancelar">Cancelar cita</a>
@@ -32,6 +32,11 @@
             <td>
                 <button>
                 <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=reprogramar">Reprogramar Cita</a>
+                </button>
+            </td>
+            <td>
+                <button>
+                <a href="{% url 'Historia_Clinica' %}">Ir A Consuta</a>
                 </button>
             </td>
 

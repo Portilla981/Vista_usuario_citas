@@ -16,7 +16,6 @@ class CreacionUser(AbstractUser):
         MEDICO = 'Medico'
         RECEPCION = 'Recepcionista'
         
-        
     class Tipo_id(models.TextChoices):
         CEDULA = 'Cédula'
         TARJETA_ID= 'Tarjeta Identidad'
@@ -36,7 +35,58 @@ class CreacionUser(AbstractUser):
     def save(self, *args, **kwargs):
         self.nombre_completo = f'{self.first_name} {self.last_name}'
         super().save(*args, **kwargs)    
+
+# Registro de habilitación y deshabilitación de usuarios
+class HabilitarDeshabilitar(models.Model):    
+    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE)
+    motivo = models.CharField(max_length= 255, null=False, blank=False)
+    estado = models.CharField(max_length= 20, null=False, blank=False)    
+    fecha_hora = models.DateTimeField(auto_now_add=True)
     
+# Creación de horarios del medico y su iteracion por medio de una señal
+class CrearHorario(models.Model):
+    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Medico')
+    fecha = models.DateField(null=False, blank=False, verbose_name='Fecha de horario')
+    hora_inicio = models.TimeField(null=False, blank=False, default= '08:00', verbose_name='Hora de inicio')# type: ignore
+    hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
+    duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duración de Cita')
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+        
+# Clase para crear los horarios de citas segun el horario del medico    
+class HorarioCita(models.Model):
+    
+    class Estado(models.TextChoices):
+        DISPONIBLE = 'Disponible'
+        AGENDADA = 'Agendada'
+        REPROGRAMADA = 'Reprogramada'
+        CANCELADA = 'Cancelada'  
+    
+    class Asistencia(models.TextChoices):
+        ASISTIO = 'Asistio'
+        NO_ASISTIO = 'No asistio'
+        ESPERA = 'A la espera'
+        
+    horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
+    fecha = models.DateField(verbose_name='Fecha')
+    hora_cita = models.TimeField(verbose_name='Hora de inicio')    
+    estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
+    asistencia = models.CharField(max_length=20, choices = Asistencia.choices, default= Asistencia.ESPERA, verbose_name='Asistencia')   
+    
+# asignación de citas a los usuarios
+class UsuarioCitas(models.Model):
+    usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Usuario')
+    cita = models.ForeignKey(HorarioCita, on_delete= models.CASCADE)
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    
+# Creación de historia clínica
+class HistoriaClinica(models.Model):
+    id_cita = models.ForeignKey(UsuarioCitas, on_delete=models.CASCADE, verbose_name='Cita asignada')
+    motivo_consulta = models.TextField(max_length=500, null=False, blank=False, verbose_name='Motivo de consulta')
+    diagnostico = models.TextField(max_length=500, null=False, blank=False, verbose_name='Diagnóstico')
+    tratamiento = models.TextField(max_length=500, null=False, blank=False, verbose_name='Tratamiento')
+    fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name='Fecha de Consulta')
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
 
 # Creación de formulario para contactarse
 class ContactarUsuario(models.Model):
@@ -64,45 +114,6 @@ class ContactarUsuario(models.Model):
     
     def __str__(self):
         return f'{self.nombres} - {self.apellidos}' 
-    
-    
-class HabilitarDeshabilitar(models.Model):    
-    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE)
-    motivo = models.CharField(max_length= 255, null=False, blank=False)
-    estado = models.CharField(max_length= 20, null=False, blank=False)    
-    fecha_hora = models.DateTimeField(auto_now_add=True)
-    
-
-class CrearHorario(models.Model):
-    id_usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Medico')
-    fecha = models.DateField(null=False, blank=False, verbose_name='Fecha de horario')
-    hora_inicio = models.TimeField(null=False, blank=False, default= '08:00', verbose_name='Hora de inicio')# type: ignore
-    hora_final = models.TimeField(null=False, blank=False, default= '18:00', verbose_name='Hora de final') # type: ignore
-    duracion = models.IntegerField(null=False, blank=False, default= 20, verbose_name='Duración de Cita')
-    fecha_registro = models.DateTimeField(auto_now_add=True)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
-            
-class HorarioCita(models.Model):
-    
-    class Estado(models.TextChoices):
-        DISPONIBLE = 'Disponible'
-        AGENDADA = 'Agendada'
-        REPROGRAMADA = 'Reprogramada'
-        CANCELADA = 'Cancelada'    
-    
-    horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
-    fecha = models.DateField(verbose_name='Fecha')
-    hora_cita = models.TimeField(verbose_name='Hora de inicio')    
-    estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
-    asistencia = models.BooleanField(default=False, verbose_name='Asistencia', null=True, blank=True)
-    
-
-class UsuarioCitas(models.Model):
-    usuario= models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Usuario')
-    cita = models.ForeignKey(HorarioCita, on_delete= models.CASCADE)
-    estado_cita = models.CharField(max_length=20, verbose_name='Estado cita')   
-    fecha_registro = models.DateTimeField(auto_now_add=True)
-    
 
 
 

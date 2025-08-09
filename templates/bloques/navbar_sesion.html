@@ -26,13 +26,12 @@
                     <a href="#" class="navbar__link">Horarios</a>
                     <ul>
                         <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
+                    </ul>                   
+                    
+                    <ul>
+                        <a href="{% url 'Med_Cita_Asig' %}" class="navbar__link">Atencion de citas</a> 
                     </ul>
                     
-                    {% comment %}
-                    <ul>
-                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Buscar Horarios</a> 
-                    </ul>
-                    {% endcomment %}
                         
                 </li>                
                 <li class="navbar__item" >
@@ -73,8 +72,10 @@
                     </ul>
 
                 </li>
-                <li class="navbar__item">
-                    <a href="#" class="navbar__link">Historia clínica</a>
+                <li class="navbar__item"><a href="#" class="navbar__link">Historia clínica</a>
+                    <ul>
+                        <a href="{% url 'Historia_Clinica' %}" class="navbar__link">Registro Historia Clinica</a>
+                    </ul>
                 </li>
                 <li class="navbar__item">
                     <a href="#" class="navbar__link">Facturación</a>

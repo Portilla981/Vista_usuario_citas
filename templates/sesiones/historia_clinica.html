@@ -1,0 +1,85 @@
+{% extends 'index.html' %}
+
+{% block contenido1 %}
+<div style="display: flex; justify-content: space-between; align-items: center; ">
+<div>
+<form action="" method="post">
+    {% csrf_token %}
+    <h2>Numero identificacion</h2>
+    <label for="">Buscar</label>
+    <input type="number" name="buscar_paciente" placeholder="Ingrese el numero de identificacion del paciente" required >
+    <button type="submit" >Buscar</button>
+    <button>
+        <a href="{% url 'Historia_Clinica' %}">Borrar</a>
+    </button>
+
+    <fieldset>
+        <legend>Datos del Paciente</legend>
+        {% if paciente %}        
+        {% comment %}
+        <label for="">Nombre paciente</label>
+        <input type="text" name="nombre_paciente" value="{{ paciente.nombre_completo }}" readonly>
+        {% endcomment %}
+        <p>Nombre: {{ paciente.nombre_completo }}</p>
+        <p>Tipo de Identificacion: {{ paciente.tipo_id }}</p>
+        <p>Numero de Identificacion: {{ paciente.numero_id }}</p> 
+        <p>Telefono: {{ paciente.telefono }}</p>
+        <p>Correo Electronico: {{ paciente.email }}</p>
+        {% else %}      
+        <p>No se encontraron resultados de su búsqueda</p>
+        {% endif %}  
+    </fieldset>
+</form>
+</div>
+
+<div style="height: 200px; overflow-y: scroll;"">
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Médico</th>
+                <th>Id Cita</th>
+                <th>Estado Cita</th>
+                <th>Motivo de Consulta</th>
+                <th>Diagnóstico</th>    
+                <th>Tratamiento</th>
+                <th>Asistencia</th>
+                <th>Acciones</th>   
+
+            </tr>
+        </thead>
+        
+        <tbody> 
+            {% for cita in consulta %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ cita.id_cita.cita.fecha }}</td>
+                <td>{{ cita.id_cita.cita.hora_cita }}</td>
+                <td>{{ cita.id_cita.cita.horario.id_usuario.nombre_completo }}</td>
+                <td>{{ cita.id_cita.cita.id }}</td>
+                <td>{{ cita.id_cita.cita.estado }}</td>
+                <td>{{ cita.motivo_consulta }}</td>
+                <td>{{ cita.diagnostico }}</td>
+                <td>{{ cita.tratamiento }}</td>                
+                <td>{{ cita.id_cita.cita.asistencia }}</td> 
+                
+            <tr>
+            {% endfor %}
+    </table>
+</div>
+</div>
+
+
+
+<div style="margin-bottom: 60px;">
+    <form method="POST" >
+        <h2>Historia clinica</h2>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input name="guardar_historia" type="hidden" >    
+        <button type="submit">Guardar Consulta</button>
+    </form>    
+</div>
+{% endblock %}

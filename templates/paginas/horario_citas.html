@@ -35,14 +35,17 @@
                 <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
                 <td>{{ cita.estado }}</td>
                 <td>
-                    <form action="{% url 'Tomar_cita' %}" method="post">
-                        {% csrf_token %}
+                <form action="{% url 'Tomar_cita' %}" method="post">
+                    {% csrf_token %}
                         <input type="hidden" name="cita_horario" value="{{ cita.id }}">
-                        {% if usuario_id %}
-                            <input type="hidden" name="usuario_id" value="{{ usuario_id }}">    
-                        {% endif %}
-                        <button type="submit">Seleccionar</button>
-                    </form>
+                    {% if usuario_id %}
+                        <input type="hidden" name="usuario_id" value="{{ usuario_id }}">    
+                    {% endif %}  
+                                    
+                    {% if cita.estado == 'Disponible'  %}
+                        <button type="submit">Seleccionar</button>                        
+                    {% endif %}
+                </form>
                 </td>
             </tr>
             {% endfor %}
@@ -56,81 +59,5 @@
 </div>
 </div>
 
-
-
-
-{% comment %}
-__________________________________________________________________________
-<!-- <form method="get" action="{% url 'Registro_Citas' %}">
-    <label for="fecha">Fecha:</label>
-    <input type="date" id="fecha" name="fecha">
-    <label for="medico">Médico:</label>
-    <select id="medico" name="medico">
-        <option value="">Todos los médicos</option>
-        {% for medico in medicos %}
-        <option value="{{ medico.id }}">{{ medico.nombre_completo }}</option>
-        {% endfor %}
-    </select>
-    <label for="horario">Horario:</label>
-    <select id="horario" name="horario">
-        <option value="">Todos los horarios</option>
-        <option value="manana">Mañana</option>
-        <option value="tarde">Tarde</option>
-    </select>
-    <button type="submit">Buscar</button>
-</form> -->
-
-<table class="table-admin">
-    <p>{{error}}</p>
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Medico</th>
-            <th>Fecha</th>
-            <th>Hora Inicio</th>
-            <th>Estado Cita</th>
-            <th colspan="2">Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% if citas %}
-        {% for cita in citas %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
-            <td>{{ cita.fecha }}</td>
-            <td>{{ cita.hora_cita }}</td>
-            <td>
-                <form action="{% url 'Tomar_cita' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="cita_horario" value="{{ cita.id }}">
-                    <button type="submit">Seleccionar</button>
-                </form>
-            </td>
-
-        </tr>
-        {% endfor %}
-        {% else %}
-        {% for cita in tabla %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ cita.horario.id_usuario.nombre_completo }}</td>
-            <td>{{ cita.fecha }}</td>
-            <td>{{ cita.hora_cita }}</td>
-            <td>{{ cita.estado }}</td>
-            <td>
-                <form action="{% url 'Tomar_cita' %}" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="cita_horario" value="{{ cita.id }}">
-                    <button type="submit">Seleccionar</button>
-                </form>
-            </td>
-
-        </tr>
-        {% endfor %}
-        {% endif %}
-    </tbody>
-</table>
-{% endcomment %}
 
 {% endblock %}
