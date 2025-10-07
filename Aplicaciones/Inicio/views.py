@@ -89,7 +89,7 @@ def iniciar_sesion(request):
                 print('Problemas de ingreso de validación')
                 data = {
                     'titulo': 'Inicio Sesión',
-                    'form': formulario,
+                    'form': Iniciar_Sesion(), 
                     'error': 'Usuario o contraseña incorrect@, por favor verifique e intente nuevamente'
                 }
                 print('No se puede ingresar')
@@ -359,12 +359,14 @@ def editar_horario_medicos(request, pk):
 
 # Listar las citas disponibles
 @login_required
-def mostrar_horario_disponible(request):  
+def mostrar_horario_disponible(request):
+    print("Entrando a mostrar horarios disponibles, desconectado")  
     # Esta sin funcionamiento hasta el moemnto
     hoy = date.today()  
     medicos = CrearHorario.objects.all()
     # Filtros para la vista mayor que __gt menor q __lt mayor igual q  __gte menoir igual q __lte el dia de hoy
-    intervalos = HorarioCita.objects.filter(fecha__gte = hoy).order_by('fecha') # type: ignore
+    # intervalos = HorarioCita.objects.filter(fecha__gt = hoy).order_by('fecha') # type: ignore
+    intervalos = HorarioCita.objects.all()#.order_by('fecha') # type: ignore
         
     return render(request, 'paginas/horario_citas.html', {'tabla':intervalos, 'medico': medicos})
     
@@ -380,6 +382,7 @@ def asignar_cita(request):
             usuario =  get_object_or_404(CreacionUser, id= id_usuario)
             print(f'Usuario seleccionado {usuario.nombre_completo}')
         else:
+            print("Cuenta de usuario")
             usuario = request.user # Sirve para tomar el id loqueado
         
         horario = HorarioCita.objects.get(id = id_horario)
@@ -390,8 +393,7 @@ def asignar_cita(request):
             horario.save()
             UsuarioCitas.objects.create(usuario = usuario, cita= horario)
             #cita_disponible = UsuarioCitas.objects.create(usuario = request.user, cita= horario, estado_cita = horario.estado) # type: ignore
-            print('Listos')
-            
+            print('Listos')          
             
             if not id_usuario or int(id_usuario) == request.user.id:
                 messages.success(request, f'Cita asignada correctamente')
@@ -399,7 +401,7 @@ def asignar_cita(request):
             else:
                 messages.success(request, f'Cita asignada correctamente a {usuario.nombre_completo} ')
                 print(f'Se envió satisfactoriamente el usuario {usuario.nombre_completo}')
-                return redirect('Citas_programadas')
+                return redirect('Mis_citas')
                 
                 # # Enviar correo al usuario que ha tomado la cita
                 # send_mail(
@@ -419,21 +421,34 @@ def asignar_cita(request):
 @login_required
 def citas_usuario(request):
     print('Entrando a mis citas')
-    citas = UsuarioCitas.objects.filter(usuario = request.user)
-    #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
-    return render(request, 'sesiones/citas_usuario.html',{'citas':citas})
+    admin = CreacionUser.objects.get(username = request.user) # type: ignore
+    if admin.is_superuser: # type: ignore
+        print("Entradno como admin")
+        citas = UsuarioCitas.objects.all().order_by('cita__fecha')
+        admin = 'si'
+    else:
+        citas = UsuarioCitas.objects.filter(usuario = request.user).order_by('cita__fecha')
+        print(f'El usuario es {request.user}') # type: ignore
+        admin = 'no'
+        
+    return render(request, 'sesiones/citas_usuario.html',{'citas':citas, 'admin': admin})
 
 @login_required # type: ignore
 def citas_medico(request):
-    print('Entrando a citas por medico medicos')
-    # Se filtran las citas por el usuario que esta logueado
-    medico = CreacionUser.objects.get(username =request.user) # type: ignore
-    print(f'El medico es {medico.pk}')
-    citas = UsuarioCitas.objects.filter(cita__horario__id_usuario= medico.pk).order_by('cita__fecha') # type: ignore
-    #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
-    return render(request, 'sesiones/citas_medico.html',{'citas':citas})
-
-
+    print('Entrando a citas por medicos')
+    medico = CreacionUser.objects.get(username = request.user) # type: ignore
+    
+    if medico.is_superuser: # type: ignore
+        print('Mirar todas las citas')
+        citas = UsuarioCitas.objects.all().order_by('cita__fecha') 
+        admin = 'si'
+    else:            
+        # Se filtran las citas por el usuario que esta logueado
+        print(f'El medico es {medico.nombre_completo}')
+        citas = UsuarioCitas.objects.filter(cita__horario__id_usuario= medico.pk).order_by('cita__fecha') # type: ignore
+        #formato = [cita_disp.cita for cita_disp in citas] # type: ignore
+        admin = 'no'
+    return render(request, 'sesiones/citas_medico.html',{'citas':citas, 'admin': admin})
 
 @login_required # type: ignore
 def citas_programadas(request):
@@ -441,7 +456,7 @@ def citas_programadas(request):
     estado = request.POST.get('estado')
     citas = UsuarioCitas.objects.all().order_by('cita__fecha')
     if estado:
-        citas = citas.filter(cita__estado=estado).order_by('cita__fecha')
+        citas = citas.filter(actividad_cita=estado).order_by('cita__fecha')
     return render(request, 'paginas/citas_programadas.html',{'citas':citas})
 
 @login_required
@@ -456,24 +471,28 @@ def cancelar_cita_usuario(request, cita_id):
         accion = request.GET.get('accion')
         
         if accion == 'cancelar':
-            cita_usuario = UsuarioCitas.objects.filter(usuario = request.user, cita = cita_id).first()
-            horario.estado = 'Disponible'  
+            cita_usuario = UsuarioCitas.objects.filter(cita = cita_id).first()
+            horario.estado = 'Disponible'
+            horario.asistencia = 'Cancelada'  
             horario.save()
             print(cita_usuario) # type: ignore        
             # cita_usuario.cita.delete()       # type: ignore
-            cita_usuario.estado_cita = 'Cancelada' # type: ignore
+            cita_usuario.actividad_cita = 'Cancelada' # type: ignore
             cita_usuario.save() # type: ignore
+            
+            
         
         elif accion == 'reprogramar':
             cita_usuario = UsuarioCitas.objects.filter(usuario = request.user, cita = cita_id).first()
-            horario.estado = 'Reprogramada'  
+            horario.estado = 'Reprogramada' 
+            horario.asistencia = 'Cancelada'   
             horario.save()
             print(cita_usuario) # type: ignore        
             # cita_usuario.cita.delete()       # type: ignore
-            cita_usuario.estado_cita = 'Reprogramada' # type: ignore
+            cita_usuario.estado = 'Reprogramada' # type: ignore
             cita_usuario.save() # type: ignore
         
-        return redirect('Mis_citas')
+        return redirect('Med_Cita_Asig')
     
     except UsuarioCitas.DoesNotExist:
         raise forms.ValidationError('No tiene permiso para cancelar citas')
@@ -481,7 +500,7 @@ def cancelar_cita_usuario(request, cita_id):
 # Buscar citas enlistados 
 @login_required # type: ignore
 def buscar_citas(request):   
-    usuario_id = request.GET.get('usuario_id') or request.POST.get('usuario_id') # type: ignore
+    usuario_id = request.GET.get('usuario_id_busqueda') or request.POST.get('usuario_id') # type: ignore
     print(f'pasando el usuario {usuario_id}')
     citas = None  
     titu = 'Esperando resultados'  
@@ -508,15 +527,15 @@ def buscar_citas(request):
                 citas = citas.filter(hora_cita__gte='06:00', hora_cita__lte='12:00')
             elif hora == 'tarde':
                 citas = citas.filter(hora_cita__gte='12:00', hora_cita__lte='20:00')    
-           
             print('Procesandos')
         else:
             print('Problemas de validación del form')  
     
     else:
-        print('Ingresando primeo')
-        datos = BarraBusquedaCitas()
-        
+        print('Ingresando primero al formulario')
+        datos = BarraBusquedaCitas() 
+        #citas = HorarioCita.objects.filter(fecha__gte = hoy).order_by('fecha') 
+        citas = HorarioCita.objects.all().order_by('fecha')             
         
     return render(request,'paginas/horario_citas.html', {'formato': datos, 'datos':citas ,'titulo': titu, 'usuario_id':usuario_id})
         
@@ -540,7 +559,7 @@ def busquedaUser(request):
 @login_required
 def busqueda_AsitenciaUser(request):
     form = BusquedaUsuario()
-    citas = UsuarioCitas.objects.all().order_by('cita')    
+    citas = UsuarioCitas.objects.filter(actividad_cita = 'Asignada').order_by('cita')    
     cita_id = None
     usuario = None
     if request.method == 'POST':
@@ -551,24 +570,42 @@ def busqueda_AsitenciaUser(request):
                 numero = form.cleaned_data['identificacion']
                 tipo = form.cleaned_data['tipo_id']
                 print(numero, tipo)
-                usuario = UsuarioCitas.objects.filter(usuario__numero_id = numero, usuario__tipo_id = tipo)
+                usuario = UsuarioCitas.objects.filter(usuario__numero_id = numero, usuario__tipo_id = tipo, actividad_cita = 'Asignada')
                 print(usuario.values('usuario__pk')) # type: ignore
             return render(request, 'sesiones/asistencia_citas.html', {'form':form, 'datos':usuario})
             
-        elif 'cita_asistencia' in request.POST:
-            print('Entrando a buscar cita')
+        elif 'asistencia' in request.POST:
+            print('Entrando a buscar cita/ asistio')
             cita_id = request.POST.get('cita_asistencia')
             print(f'Buscando la cita {cita_id}')
             uno = UsuarioCitas.objects.get(pk = cita_id)
             print(f'citas encontradas {uno.cita.asistencia}') # type: ignore
-            if uno.cita.asistencia == True:
-                # uno.cita.asistencia = False
+            if uno.cita.asistencia == "A la espera" or uno.cita.asistencia == "No Asistio": # type: ignore
+                uno.cita.asistencia = "Asistio" # type: ignore
                 uno.cita.save() 
-            else:
-                # uno.cita.asistencia = True
-                uno.cita.save()
-            print(f'cita actualizada {uno.cita.asistencia}') # type: ignore         
-    
+                print(f'cita actualizada {uno.cita.asistencia}') # type: ignore            
+        
+        elif 'no_asistencia' in request.POST:
+            print('Entrando a buscar cita/ no asistio')
+            cita_id = request.POST.get('cita_asistencia')
+            print(f'Buscando la cita {cita_id}')
+            uno = UsuarioCitas.objects.get(pk = cita_id)
+            print(f'citas encontradas {uno.cita.asistencia}') # type: ignore
+            if uno.cita.asistencia == "A la espera" or uno.cita.asistencia == "Asistio": # type: ignore
+                uno.cita.asistencia = "No Asistio" # type: ignore
+                uno.cita.save() 
+                print(f'cita actualizada {uno.cita.asistencia}') # type: ignore
+        
+        elif 'borrar_asistencia' in request.POST:
+            print('Entrando a buscar cita/ borrar')
+            cita_id = request.POST.get('cita_asistencia')
+            print(f'Buscando la cita {cita_id}')
+            uno = UsuarioCitas.objects.get(pk = cita_id)
+            print(f'citas encontradas {uno.cita.asistencia}') # type: ignore        
+            uno.cita.asistencia = "A la espera" # type: ignore
+            uno.cita.save() 
+            print(f'cita actualizada {uno.cita.asistencia}') # type: ignore 
+            
     return render(request, 'sesiones/asistencia_citas.html', {'form':form, 'citas':citas})
 
 
@@ -582,6 +619,8 @@ def asistencia_citas(request):
 
 @login_required  # type: ignore
 def registrar_historia_clinica(request):
+    usuario_id = request.GET.get('usuario_consulta') # type: ignore
+    
     medico = request.user
     form = FormularioHistoriaClinica()
     
@@ -597,9 +636,10 @@ def registrar_historia_clinica(request):
             id_cita = UsuarioCitas.objects.filter(usuario = paciente).first()  # type: ignore
             if paciente:
                 print(f'El paciente es {paciente} y la cita es {id_cita.cita} del medico {id_cita.cita.horario.id_usuario.nombre_completo}') # type: ignore
-               # Si se encuentra el paciente, se obtienen sus citas y se renderiza el formulario    
+            # Si se encuentra el paciente, se obtienen sus citas y se renderiza el formulario    
             else: 
                 print('Paciente no encontrado')
+                
             if paciente: # type: ignore
                 print(f'Paciente encontrado: {paciente.nombre_completo}')
                 citas = UsuarioCitas.objects.filter(usuario__username = paciente).order_by('cita__fecha')
@@ -613,8 +653,6 @@ def registrar_historia_clinica(request):
     
             #     return render(request, 'sesiones/historia_clinica.html', {'form': form})
 
-                
-    
         elif 'guardar_historia' in request.POST:            
             print('Guardando historia clinica')
             id_cita = request.POST.get('id_cita') # type: ignore
@@ -643,48 +681,31 @@ def registrar_historia_clinica(request):
                 # Si el formulario es enviado, se crea una instancia del formulario con los datos del POST
                 historia = HistoriaClinica.objects.create(id_cita_id = id_cita, motivo_consulta = motivo, diagnostico = diagnostico, tratamiento = tratamiento) # type: ignore
                 historia.save()
+                uno = UsuarioCitas.objects.get(pk = id_cita)
+                uno.cita.asistencia = "Asistio" # type: ignore
+                uno.cita.save()
+                
                 messages.success(request, 'Historia clinica guardada exitosamente')
-                return redirect('Historia_Clinica') 
-            
-            
-            
-            
-            # form = FormularioHistoriaClinica(request.POST, id_cita = id_cita) # type: ignore
-            # print(f'ID de cita: {id_cita}')
-            
-            # print(f'Formulario recibido:') # type: ignore
-            # print(form.data.get('id_cita')) # type: ignore
-            # print(form.data.get('motivo_consulta')) # type: ignore
-            # print(form.data.get('diagnostico')) # type: ignore
-            # print(form.data.get('tratamiento')) # type: ignore
-            
-            # #print(form.id_cita)
-            # if form.is_valid():
-            #     historia = form.save(commit=False)
-            #     print('Historia clinica validada y lista para guardar')
-            #     historia.medico = medico  # type: ignore            
-            #     historia.id_cita = id_cita  # type: ignore
-            #     print("esperando para guardar")
-            #     historia.save()
-            #     messages.success(request, 'Historia clinica guardada exitosamente')
-            #     return redirect('Registrar_historia_clinica') 
-            # else:
-            #     print('Error al guardar historia clinica')
-            #     #messages.error(request, 'Error al guardar historia clinica, por favor verifique los datos')
-            #     #return render(request, 'sesiones/historia_clinica.html', {'form': form, 'error': 'Error al guardar historia clinica'})     
+                return redirect('Historia_Clinica')      
     
-    
+    elif usuario_id:
+        print(f'Buscando paciente con id: {usuario_id}')
+        paciente = CreacionUser.objects.filter(numero_id=usuario_id).first()
+        
+        if paciente: # type: ignore
+            print(f'Paciente encontrado: {paciente.nombre_completo}')
+            citas = UsuarioCitas.objects.filter(usuario_id = paciente).order_by('cita__fecha')
+            consulta = HistoriaClinica.objects.filter(id_cita__usuario_id = paciente).order_by('id_cita__cita__fecha') # type: ignore
+            print(f'Historias clinicas del paciente encontrado: {consulta}')
+            print(f'Citas del paciente encontrado: {citas}')
+            form = FormularioHistoriaClinica(id_cita = paciente) # type: ignore
+            return render(request, 'sesiones/historia_clinica.html', {'form': form, 'paciente': paciente, 'citas': citas, 'consulta': consulta})   
+              
+            
     elif medico:
         form = FormularioHistoriaClinica(initial= {'medico':medico.pk}) # type: ignore
-
-
-
     else:        
         print('Paciente no encontrado')
-        
-        
-    
-    
     return render(request, 'sesiones/historia_clinica.html', {'form': form})
 
 

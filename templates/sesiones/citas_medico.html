@@ -1,8 +1,9 @@
 {% extends 'index.html' %}
 
 {% block contenido1 %}
-<h1>Citas asignadas</h1>
-{{ error }}
+<h1>Citas Asignadas a Medicos</h1>
+
+
 <div style="height: 200px; overflow-y: scroll;">
 <table style="width:80%; justify-content: center; ">
     <thead>
@@ -10,7 +11,10 @@
             <th>No.</th>
             <th>Fecha</th>
             <th>Hora</th>
-            <th>Paciente</th>
+            <th>Paciente</th>            
+            {% if admin == 'si' %}
+                <th>Médico</th>            
+            {% endif %}
             <th>Estado cita</th>
             <th colspan="3">Acciones</th>
         </tr>
@@ -21,9 +25,12 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ cita.cita.fecha }}</td>
             <td>{{ cita.cita.hora_cita }}</td>
-            <td>{{ cita.usuario.nombre_completo }}</td>            
-            <td>{{ cita.cita.estado }}</td> 
-            {% if cita.cita.estado == 'Agendada' %}           
+            <td>{{ cita.usuario.nombre_completo }}</td>
+            {% if admin == 'si' %}
+                <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
+            {% endif %}           
+            <td>{{ cita.actividad_cita }}</td> 
+            {% if cita.actividad_cita == 'Asignada' %}           
             <td>
                 <button>
                 <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=cancelar">Cancelar cita</a>
@@ -36,7 +43,7 @@
             </td>
             <td>
                 <button>
-                <a href="{% url 'Historia_Clinica' %}">Ir A Consuta</a>
+                <a href="{% url 'Historia_Clinica' %}?usuario_consulta={{cita.usuario.numero_id}}  ">Ir A Consuta</a>
                 </button>
             </td>
 

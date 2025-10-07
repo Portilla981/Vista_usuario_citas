@@ -1,13 +1,16 @@
 {% extends 'index.html' %}
 
 {% block contenido1 %}
-<h1>Citas asignadas</h1>
+<h1>Mis Citas Programadas</h1>
 {{ error }}
 <div style="height: 200px; overflow-y: scroll;">
 <table style="width:80%; justify-content: center; ">
     <thead>
         <tr>
-            <th>No.</th>
+            <th>No.</th>            
+            {% if admin == 'si' %}
+            <th>Paciente</th>                
+            {% endif %}
             <th>Fecha</th>
             <th>Hora</th>
             <th>Médico</th>
@@ -19,11 +22,14 @@
         {% for cita in citas %}
         <tr>
             <td>{{ forloop.counter }}</td>
+            {% if admin == 'si' %}
+            <td>{{cita.usuario.nombre_completo}}</td>                
+            {% endif %}
             <td>{{ cita.cita.fecha }}</td>
             <td>{{ cita.cita.hora_cita }}</td>
             <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>            
-            <td>{{ cita.estado_cita }}</td> 
-            {% if cita.estado_cita == 'Agendada' %}           
+            <td>{{ cita.actividad_cita }}</td> 
+            {% if cita.actividad_cita == 'Asignada' %}           
             <td>
                 <button>
                 <a href="{% url 'Cancelar_citas' cita.cita.id %}?accion=cancelar">Cancelar cita</a>

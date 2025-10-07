@@ -29,12 +29,7 @@
                 <td>{{ cita.cita.hora_cita }}</td>
                 <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
                 <td>{{ cita.cita.estado }}</td>
-                {% if cita.cita.asistencia == True %}
-                <td>Asistió</td>
-                {% else %}
-                <td>Esperando</td>
-                {% endif %}
-                
+                <td>{{ cita.cita.asistencia }}</td>
             </tr>
             {% endfor %}
         </tbody> 

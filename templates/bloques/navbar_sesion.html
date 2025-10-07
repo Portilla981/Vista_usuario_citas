@@ -10,7 +10,10 @@
             <ul class="navbar__list">
                 <li class="navbar__item">
                     <a href="{% url 'Principal' %}" class="navbar__link">Perfil de usuario</a>
-                    {% if user.is_superuser == True %}
+                    {% if user.tipo_usuario == "Administrador" %}
+                    <ul>
+                        <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
+                    </ul>
                     <ul>
                         <a href="{% url 'Lista_cuentas' %}" class="navbar__link">Listar cuentas</a>
                     </ul>
@@ -24,6 +27,11 @@
                 </li>
                 <li class="navbar__item">
                     <a href="#" class="navbar__link">Horarios</a>
+                    {% if user.is_superuser == True or user.tipo_usuario == 'Medico' or user.tipo_usuario == 'Administrador' %}
+                    <ul>
+                        <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
+                    </ul>
+                    {% endif %}
                     <ul>
                         <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
                     </ul>                   
@@ -38,7 +46,7 @@
                     <a href="#" class="navbar__link">Citas</a>
 
                     <ul>
-                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Tomar cita</a>
+                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Agendar cita</a>
                     </ul>
                     <ul>
                         <a href="{% url 'Citas_programadas' %}" class="navbar__link">Lista Citas Programadas</a>
@@ -55,15 +63,9 @@
                 <li class="navbar__item"><a href="#" class="navbar__link">Registros</a>
 
                     {% if user.is_superuser == True %}
-                    <ul>
-                        <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
-                    </ul>
+                    
                     {% endif %}
-                    {% if user.is_superuser == True or user.tipo_usuario == 'Medico' %}
-                    <ul>
-                        <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
-                    </ul>
-                    {% endif %}
+                    
                     <ul>
                         <a href="{% url 'Asistencia_user' %}" class="navbar__link">Registro asistencia</a>
                     </ul>

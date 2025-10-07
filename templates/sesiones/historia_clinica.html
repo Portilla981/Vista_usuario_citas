@@ -16,17 +16,14 @@
     <fieldset>
         <legend>Datos del Paciente</legend>
         {% if paciente %}        
-        {% comment %}
-        <label for="">Nombre paciente</label>
-        <input type="text" name="nombre_paciente" value="{{ paciente.nombre_completo }}" readonly>
-        {% endcomment %}
+        
         <p>Nombre: {{ paciente.nombre_completo }}</p>
         <p>Tipo de Identificacion: {{ paciente.tipo_id }}</p>
         <p>Numero de Identificacion: {{ paciente.numero_id }}</p> 
         <p>Telefono: {{ paciente.telefono }}</p>
-        <p>Correo Electronico: {{ paciente.email }}</p>
+        <p>Correo Electronico: {{ paciente.email }}</p>                
         {% else %}      
-        <p>No se encontraron resultados de su búsqueda</p>
+            <p>No se encontraron resultados de su búsqueda</p>
         {% endif %}  
     </fieldset>
 </form>

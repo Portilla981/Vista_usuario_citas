@@ -16,7 +16,6 @@ class Formato_Contacto(forms.ModelForm):
         # Forma automática de todos los campos
         fields = '__all__'
 
-
 class Formato_RegistroU(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
     password2 = forms.CharField(
@@ -73,12 +72,10 @@ class Formato_RegistroU(forms.ModelForm):
             user.save()
         return user
 
-
 class Iniciar_Sesion(forms.Form):
     usuario = forms.CharField(max_length=12,  label='Usuario', min_length=8)
     password = forms.CharField(widget=forms.PasswordInput(
         render_value=True), label='Contraseña',)
-
 
 class PerfilUsuario(forms.ModelForm):
 
@@ -115,7 +112,6 @@ class PerfilUsuario(forms.ModelForm):
             'date_joined': forms.TextInput(attrs={'readonly': True}),
             'last_login': forms.TextInput(attrs={'readonly': True}),
         }
-
 
 class EditarUsuario(forms.ModelForm):
 
@@ -168,8 +164,7 @@ class CreacionHorarioCitas(forms.ModelForm):
                 self.fields['id_usuario'].queryset = CreacionUser.objects.filter(pk= usuario_actual.id) # type: ignore
                 self.fields['id_usuario'].initial = usuario_actual.id
                 self.fields['id_usuario'].widget.attrs['readonly']= True
-        
-    
+       
     class Meta:
         model = CrearHorario
         fields = '__all__'
@@ -272,7 +267,6 @@ class Formato_editar_horario(forms.ModelForm):
         
         print('paso todo')
 
-
 class FormatoHabilitarUser(forms.ModelForm):
     
     
@@ -319,33 +313,23 @@ class FormularioHistoriaClinica(forms.ModelForm):
             'diagnostico': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'tratamiento': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
-       
+
     def __init__(self, *args, **kwargs):
         paciente = kwargs.pop('id_cita', None)
         #medico = kwargs.pop('medico', None)
         super().__init__(*args, **kwargs)
         
         if paciente:            
-            # self.fields['medico'].initial = CreacionUser.objects.get(username = medico) # type: ignore
-            # self.fields['medico'].label_from_instance = lambda obj: f'{obj.nombre_completo}' # type: ignore
-            self.fields['id_cita'].queryset = UsuarioCitas.objects.filter(usuario = paciente).order_by('cita__fecha') # type: ignore
+            self.fields['id_cita'].queryset = UsuarioCitas.objects.filter(usuario = paciente,cita__asistencia = "A la espera").order_by('cita__fecha') # type: ignore
             self.fields['id_cita'].label_from_instance = lambda obj: f'0{obj.cita.id} - {obj.cita.fecha} - {obj.cita.hora_cita}' # type: ignore
             self.fields['id_cita'].empty_label = 'Seleccione la cita' # type: ignore            
-            # self.fields['id_cita'].widget.attrs['readonly'] = True
-            # #self.fields['medico'].widget.attrs['disabled'] = True
-
-            # self.fields['id_cita'].label = 'Id Cita'
-            # self.fields['medico'].label = 'Medico'      
             self.fields['motivo_consulta'].placeholder = 'Ingrese el motivo de la consulta' # type: ignore
             self.fields['diagnostico'].placeholder = 'Ingrese el diagnóstico' # type: ignore
             self.fields['tratamiento'].placeholder = 'Ingrese el tratamiento a seguir' # type: ignore
             
-        else:
-            # self.fields['medico'].queryset = CreacionUser.objects.filter(tipo_usuario='Medico') # type: ignore
-            # self.fields['medico'].label_from_instance = lambda obj: f'{obj.nombre_completo}' # type: ignore
+        else:            
             self.fields['id_cita'].queryset = UsuarioCitas.objects.none() # type: ignore
-            #self.fields['medico'].widget.attrs['disabled'] = True
-        
+
 
     def clean(self):
         print("Ingresando a limpiar historia clinica")

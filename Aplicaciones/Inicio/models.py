@@ -70,7 +70,7 @@ class HorarioCita(models.Model):
     horario = models.ForeignKey(CrearHorario, on_delete= models.CASCADE)
     fecha = models.DateField(verbose_name='Fecha')
     hora_cita = models.TimeField(verbose_name='Hora de inicio')    
-    estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado cita')   
+    estado = models.CharField(max_length=20, choices = Estado.choices, default= Estado.DISPONIBLE, verbose_name='Estado')   
     asistencia = models.CharField(max_length=20, choices = Asistencia.choices, default= Asistencia.ESPERA, verbose_name='Asistencia')   
     
 # asignación de citas a los usuarios
@@ -78,6 +78,7 @@ class UsuarioCitas(models.Model):
     usuario = models.ForeignKey(CreacionUser, on_delete= models.CASCADE, verbose_name='Usuario')
     cita = models.ForeignKey(HorarioCita, on_delete= models.CASCADE)
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    actividad_cita = models.CharField(max_length=20, default= "Asignada", verbose_name='Estado Cita')
     
 # Creación de historia clínica
 class HistoriaClinica(models.Model):

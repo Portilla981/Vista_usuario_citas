@@ -9,7 +9,7 @@
         <label for="estado">Filtrar por estado:</label>
         <select name="estado" id="estado">
             <option value="">Todas</option>
-            <option value="Agendada">Asignadas</option>
+            <option value="Asignada">Asignadas</option>
             <option value="Cancelada">Canceladas</option>
             <option value="Reprogramada">Reprogramadas</option>
         </select>
@@ -39,7 +39,7 @@
             <td>{{ cita.cita.fecha }}</td>
             <td>{{ cita.cita.hora_cita }}</td>
             <td>{{ cita.cita.horario.id_usuario.nombre_completo }}</td>
-            <td>{{ cita.cita.estado }}</td>
+            <td>{{ cita.actividad_cita }}</td>
             <td>{{ cita.fecha_registro }}</td>
             <td>{{ cita.cita.asistencia }}</td>
 
