@@ -1,42 +1,41 @@
-.header {
+.navbar__container{ 
+    background-color: var(--primary-950);
     position: sticky; /* Posición fija */
-    top: 0; /* Altura Total*/
-    width: 100%;
-    
+    /* top: 0; Altura Total */
+    /* width: 100%;     */
+    display: grid;
+    grid-template-columns: repeat(2, 20% 80%); /* Dos columnas de igual tamaño */
 }
 
-.navbar {
-    /* display: flex; */
-    /*flex-direction: column; /* Dirección de los elementos */
-    /* margin: 0 auto; Este pegado a la margen y utilice automáticamente el ancho */
-    padding: 5px;
-    /* width: 100%; */
-    background-color: var(--primary-950);
+.navbar-links__container{
+    display: flex;
+    align-items: end;
+    justify-content: center; /* Alinea los elementos al final del contenedor */
+    /* padding-right: 24px; Espacio a la derecha */
 }
 
 .navbar__title {
     margin: 0;
+    color: var(--white);
     padding: 12px;
-    font-size: var(--fs-xl);
+    font-size: var(--fs-lg);
     text-align: center;
     display: flex;
     flex-direction: column;
-    background-color: var(--white);
-    /* background-color: var(--primary-800); */
-}
+    }
 
 .navbar__subtitle {
-    font-size: var(--fs-xs);
+    font-size: var(--fs-md);
     color: var(--gray-700);    
 }
 
 
-.navbar__list{
+.navbar-links__list{
     list-style: none; /* Elimina los puentos de la lista de elementos*/
-    padding: 4px;
+    padding: 8px;
     margin: 0;
-    display: flex; /* Elementos en linea a lo horizontal*/
-    gap: 40px; /* Separacion de elementos */
+    display: flex; /* Elementos en linea a lo horizontal*/    
+    /* gap: 40px; Separacion de elementos */
     flex-grow: 1;
     justify-content: space-evenly; /* Separacion uniforme a lo ancho del elemento segun el total de los elementos*/
 }
@@ -45,44 +44,132 @@
 .navbar__link {
     text-decoration: none; /* Elimina el decorador de las refencias*/
     color: var(--white);
+    font-size: var(--fs-xs);
     transition: color 0.3s ease; /* Efecto*/
+    display: flex;
 }
 
 .navbar__link:hover {
-    color: red;
+    /* scale: 1.2; */
+    color: var(--secundary-900); /* Color al pasar el mouse por encima */
+}
+
+.navbar-sesion{
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+    gap: 8px;
 }
 
 
+.navbar-sesion__list--first{
+    list-style: none; /* Elimina los puentos de la lista de elementos*/
+    padding: 8px;
+    margin: 0;
+    display: flex; /* Elementos en linea a lo horizontal*/        
+    position: relative;
+    justify-content: space-evenly;
+
+    
+}
+
+.navbar-sesion__item{
+    position: relative; /* Para posicionar el submenu */
+    display: inline-block; /* Elementos en linea a lo horizontal*/
+    padding: 8px;
+}
+
+.navbar-sesion__item:hover .navbar-sesion__list{
+    display: block; /* Muestra el submenu al pasar el mouse por encima */
+}
+
+.navbar-sesion__list{
+    display: none; /* Oculta el submenu por defecto */
+    position: absolute; /* Posiciona el submenu de forma absoluta */
+    top: 100%; /* Posiciona el submenu debajo del elemento padre */
+    left: 0; /* Alinea el submenu a la izquierda del elemento padre */
+    background-color: var(--primary-950);
+}
+
+
+
+
+
+
+
 .bloque__inicio{
+    display: flex;
+    flex-direction: column;
     width: 400px;
+
+    /*
     align-self: center;
     border: solid 3px;
     border-color: var(--gray-800);
     border-radius: 5px;
     margin-top: 24px;
     padding-bottom: 24px;
-    justify-items: center;
+    justify-items: center; */
 
+}
+
+.form__credenciales{
+    display: flex;
+    flex-direction: column;
+    /* padding: 15px; */
+    justify-items: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.form__credenciales p{
+    display:flex;
+    flex-direction: column;
+    font-size: var(--fs-xs);
+    color: var(--gray-700);
+    font-weight: bold;
+}
+
+.form__credenciales input{
+    min-width: 320px;
+    padding: 16px;
+    border-radius: 8px;
+    border: solid 1px var(--gray-400);
+    font-size: var(--fs-xs);    
 }
 
 .form__inicio{
+    display: flex;
+    flex-direction: column;
     /* padding: 15px; */
-    justify-items:end;
+    /* justify-items:end; */
 
 }
 
-.form__olvido{
+.form__grupo{
+    display: flex;
+    flex-direction: column;
+    padding: 10px 40px;
+    gap: 8px;
+    align-items: center;
+}
+
+/* .form__olvido{
     display: flex;
     padding: 10px;
     justify-content: center;
     text-decoration: none;
     color: blueviolet;
-}   
+}    */
+
 
 .bloque__titulo{
-    /* padding: 20px 0 0 40px; */
+    font-size: var(--fs-sm);
+    padding: 16px 0;
     text-align: center;
 }
+
+
 
 .form__button{
     width: 60%;
@@ -96,16 +183,17 @@
 }
 
 .form__button:hover{
+    
     background-color: var(--primary-800);
     box-shadow: 2px 3px 2px gray;
 }
 
-#id_usuario, #id_password{
+/* #id_usuario, #id_password{
     font-size: var(--fs-xxxs);
     background-color: beige;
-}
+} */
 
-label{
+/* label{
     font-style: italic;
     
-}
+} */

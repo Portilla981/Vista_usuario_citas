@@ -16,8 +16,9 @@
     {% if user.is_authenticated %}
         {% include 'bloques/navbar_sesion.html' %}
     {% else %}
-        {% include 'bloques/nav_var.html' %}
+        {% include 'bloques/nabvar.html' %}
     {% endif %}
+
     {% include 'bloques/mensaje.html' %}
         
     {% block contenido1 %}

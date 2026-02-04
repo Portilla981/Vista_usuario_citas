@@ -1,13 +1,14 @@
 
-    <header class="header">
+    <header class="header__container">
+        <div class="navbar__container">
         <h1 class="navbar__title">
             POLICLI
             <span class="navbar__subtitle">Citas medicas</span>
         </h1>
-        <div class="navar-container">
-            <nav class="navbar">
-                <ul class="navbar__list">  
-                    <li class="navbar__item">
+        <div class="navbar-links__container">
+            <nav class="navbar-links__list">
+                <ul class="navbar-links__list">  
+                    <li class="navbar-links__item">
                         <a href="{% url 'Inicio' %}" class="navbar__link">Inicio</a>
                     </li>                
                     <li class="navbar__item">
@@ -21,5 +22,6 @@
                     </li>
                 </ul>
             </nav>
+        </div>
         </div>
     </header>

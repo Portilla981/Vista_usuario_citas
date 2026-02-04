@@ -1,91 +1,116 @@
 <header class="header">
-    <h1 class="navbar__title">
-        POLICLI
-        <span class="navbar__subtitle">Citas medicas</span>
+    <div class="navbar__container">
+        <div>
+            <h1 class="navbar__title">
+                POLICLI
+                <span class="navbar__subtitle">Citas medicas</span>
+            </h1>
+        </div>
 
-    </h1>
-    <h2 class="titulo__sesion">¡Bienvenido {{ user.nombre_completo }} a su sesión!</h2>
-    <div class="navar-container">
-        <nav class="navbar">
-            <ul class="navbar__list">
-                <li class="navbar__item">
-                    <a href="{% url 'Principal' %}" class="navbar__link">Perfil de usuario</a>
-                    {% if user.tipo_usuario == "Administrador" %}
-                    <ul>
-                        <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
-                    </ul>
-                    <ul>
-                        <a href="{% url 'Lista_cuentas' %}" class="navbar__link">Listar cuentas</a>
-                    </ul>
-                    <ul>
-                        <a href="{% url 'Buscar_user' %}" class="navbar__link">Buscar Usuario</a>
-                    </ul>
-                    {% endif %}
-                    <ul>
-                        <a href="{% url 'Perfiles' %}" class="navbar__link">Mis Datos</a>
-                    </ul>
-                </li>
-                <li class="navbar__item">
-                    <a href="#" class="navbar__link">Horarios</a>
-                    {% if user.is_superuser == True or user.tipo_usuario == 'Medico' or user.tipo_usuario == 'Administrador' %}
-                    <ul>
-                        <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
-                    </ul>
-                    {% endif %}
-                    <ul>
-                        <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
-                    </ul>                   
-                    
-                    <ul>
-                        <a href="{% url 'Med_Cita_Asig' %}" class="navbar__link">Atencion de citas</a> 
-                    </ul>
-                    
-                        
-                </li>                
-                <li class="navbar__item" >
-                    <a href="#" class="navbar__link">Citas</a>
+        <div class="navbar-sesion">
+            <h2 class="titulo__sesion">¡Bienvenido {{ user.nombre_completo }} a su sesión!</h2>
+            <nav class="navbar-sesion__container">
+                <ul class="navbar-sesion__list--first">
+                    <li class="navbar-sesion__item">
+                        <a href="{% url 'Principal' %}" class="navbar__link">Perfil de usuario</a>
+                        {% if user.tipo_usuario == "Administrador" %}
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Registro_usuario' %}" class="navbar__link">Crear cuenta</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Lista_cuentas' %}" class="navbar__link">Listar cuentas</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Buscar_user' %}" class="navbar__link">Buscar Usuario</a>
+                            </li>
+                        </ul>
+                        {% else %}
 
-                    <ul>
-                        <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Agendar cita</a>
-                    </ul>
-                    <ul>
-                        <a href="{% url 'Citas_programadas' %}" class="navbar__link">Lista Citas Programadas</a>
-                    </ul>
-                    <ul>
-                        <a href="{% url 'Asistencia_Citas' %}" class="navbar__link">Lista Asistencia Citas</a>
-                    </ul>
-                    <ul>
-                        <a href="{% url 'Mis_citas' %}" class="navbar__link">Mis citas</a>
-                    </ul>
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Perfiles' %}" class="navbar__link">Mis Datos</a>
+                            </li>
+                        </ul>
+
+                        {% endif %}
+                    </li>
+
+                    <li class="navbar-sesion__item">
+                        <a href="#" class="navbar__link">Horarios</a>
+                        {% if user.is_superuser == True or user.tipo_usuario == 'Medico' or user.tipo_usuario == 'Administrador' %}
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Registro_horario' %}" class="navbar__link">Crear Horario</a>
+                            </li>
+                        </ul>
+
+                        {% else %}
+
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Lista_Horarios' %}" class="navbar__link">Listar Horarios</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Med_Cita_Asig' %}" class="navbar__link">Atencion de citas</a>
+                            </li>
+                        </ul>
+                        {% endif %}
+                    </li>
+
+                    <li class="navbar-sesion__item">
+                        <a href="#" class="navbar__link">Citas</a>
+
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Buscar_Horarios' %}" class="navbar__link">Agendar cita</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Citas_programadas' %}" class="navbar__link">Lista Citas Programadas</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Asistencia_Citas' %}" class="navbar__link">Lista Asistencia Citas</a>
+                            </li>
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Mis_citas' %}" class="navbar__link">Mis citas</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="navbar-sesion__item"><a href="#" class="navbar__link">Registros</a>
+
+                        {% if user.is_superuser == True %}
+
+                        {% endif %}
+
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Asistencia_user' %}" class="navbar__link">Registro asistencia</a>
+                            </li>
+
+                            <li class="navbar-sesion__item">
+
+                                <a href="" class="navbar__link">Lista asistencia</a>
+                            </li>
+                        </ul>
+
+                    </li>
 
 
-                </li>
-                <li class="navbar__item"><a href="#" class="navbar__link">Registros</a>
-
-                    {% if user.is_superuser == True %}
-                    
-                    {% endif %}
-                    
-                    <ul>
-                        <a href="{% url 'Asistencia_user' %}" class="navbar__link">Registro asistencia</a>
-                    </ul>
-                    <ul>
-                        <a href="" class="navbar__link">Lista asistencia</a>
-                    </ul>
-
-                </li>
-                <li class="navbar__item"><a href="#" class="navbar__link">Historia clínica</a>
-                    <ul>
-                        <a href="{% url 'Historia_Clinica' %}" class="navbar__link">Registro Historia Clinica</a>
-                    </ul>
-                </li>
-                <li class="navbar__item">
-                    <a href="#" class="navbar__link">Facturación</a>
-                </li>
-                <li class="navbar__item">
-                    <a href="{% url 'Sesion_Cerrada' %}" class="navbar__link">Salir de sesión</a>
-                </li>
-            </ul>
-        </nav>
+                    <li class="navbar-sesion__item"><a href="#" class="navbar__link">Historia clínica</a>
+                        <ul class="navbar-sesion__list">
+                            <li class="navbar-sesion__item">
+                                <a href="{% url 'Historia_Clinica' %}" class="navbar__link">Registro Historia
+                                    Clinica</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="navbar-sesion__item"><a href="#" class="navbar__link">Facturación</a></li>
+                    <li class="navbar-sesion__item">
+                        <a href="{% url 'Sesion_Cerrada' %}" class="navbar__link">Salir de sesión</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
     </div>
 </header>

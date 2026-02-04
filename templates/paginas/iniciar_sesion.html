@@ -1,23 +1,24 @@
 {% extends 'index.html' %}
 
-
 {% block contenido1 %}
 
-<div class="bloque__inicio">
-    <h2 class="bloque__titulo">Iniciar sesión</h2>
-    <form class="form__inicio" action="{% url 'Inicio_sesion' %}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
+    <div class="bloque__inicio">
+        <h2 class="bloque__titulo">Iniciar sesión</h2>
+        
+        <form class="form__inicio" action="{% url 'Inicio_sesion' %}" method="POST">
+            <div class="form__credenciales">
+            {% csrf_token %}
+            {{ form.as_p }}
+            </div>
+            <div class="form__grupo">
+                <a class="form__olvido" href="#">¿Olvidaste tu contraseña?</a>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button class="form__button" type="submit">Ingresar</button>
+            </div>
+        </form>
         <div>
-            <a class="form__olvido" href="#">¿Olvidaste tu contraseña?</a>
-            <input type="hidden" name="next" value="{{ next }}">
-            <button class="form__button" type="submit">Ingresar</button>
+            <p>{{ error }}</p>
         </div>
-
-    </form>
-    <div>
-        <p>{{ error }}</p>
     </div>
-</div>
 
 {% endblock %}
